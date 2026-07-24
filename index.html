@@ -8,7 +8,7 @@
   <!-- Professional Icon Library: Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   
-  <!-- Matching Typography with RoamCraft: Space Grotesk, IBM Plex Sans & IBM Plex Mono -->
+  <!-- Matching Typography: Space Grotesk, IBM Plex Sans & IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
 </head>
 <body>
   <div class="app-layout">
-    <!-- Corporate Sidebar Navigation -->
+    <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-icon">
@@ -44,14 +44,14 @@
         </button>
         <button class="nav-item" data-tab="calculator">
           <i class="fa-solid fa-calculator"></i>
-          <span>50/30/20 Planner</span>
+          <span>50/30/20 Rule</span>
         </button>
       </nav>
 
       <div class="api-key-box">
         <div class="api-status">
           <span class="status-dot active"></span>
-          <span class="status-text">AI Engine Active</span>
+          <span class="status-text">AI Adviser Ready</span>
         </div>
         <button class="btn-secondary btn-small" id="open-settings-btn">
           <i class="fa-solid fa-gear"></i> Settings
@@ -59,19 +59,19 @@
       </div>
     </aside>
 
-    <!-- Main Content Workspace -->
+    <!-- Main Workspace -->
     <main class="main-content">
       <!-- Top Bar -->
       <header class="top-bar">
         <div class="disclaimer-badge">
           <i class="fa-solid fa-circle-info"></i>
-          <span>Notice: Educational financial planning interface. General analysis only.</span>
+          <span>Notice: General educational financial planning tool.</span>
         </div>
         <div class="user-profile">
           <div class="avatar">
             <i class="fa-solid fa-user"></i>
           </div>
-          <span>Primary Account</span>
+          <span>My Profile</span>
         </div>
       </header>
 
@@ -79,7 +79,7 @@
       <section id="tab-dashboard" class="tab-page active">
         <div class="page-title">
           <h1>Financial Overview</h1>
-          <p>Monthly cash flow metrics and budget performance.</p>
+          <p>Track your monthly cash flow and financial health score.</p>
         </div>
 
         <div class="stats-grid">
@@ -91,7 +91,7 @@
               </div>
             </div>
             <div class="stat-value font-mono" id="disp-income">$5,000</div>
-            <div class="stat-sub">Net after taxes</div>
+            <div class="stat-sub">Take-home pay</div>
           </div>
 
           <div class="stat-card">
@@ -107,7 +107,7 @@
 
           <div class="stat-card">
             <div class="stat-header">
-              <span>Net Monthly Surplus</span>
+              <span>Monthly Savings</span>
               <div class="stat-icon-badge success">
                 <i class="fa-solid fa-piggy-bank"></i>
               </div>
@@ -118,40 +118,40 @@
 
           <div class="stat-card">
             <div class="stat-header">
-              <span>Financial Health Index</span>
+              <span>Financial Health Score</span>
               <div class="stat-icon-badge success">
                 <i class="fa-solid fa-shield-halved"></i>
               </div>
             </div>
             <div class="stat-value font-mono text-success" id="disp-score">85/100</div>
-            <div class="stat-sub">Rating: Excellent</div>
+            <div class="stat-sub">Status: Excellent</div>
           </div>
         </div>
 
-        <!-- Cashflow Budget Calculator -->
+        <!-- Monthly Budget Inputs -->
         <div class="content-card margin-top">
           <h3>Monthly Budget Allocations</h3>
           <div class="form-grid">
             <div class="form-group">
-              <label for="input-income">Monthly Net Income ($)</label>
+              <label for="input-income">Monthly Income ($)</label>
               <input type="number" id="input-income" value="5000" placeholder="5000" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-needs">Essential Obligations ($)</label>
+              <label for="input-needs">Needs & Bills ($)</label>
               <input type="number" id="input-needs" value="2500" placeholder="2500" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-wants">Discretionary Spending ($)</label>
+              <label for="input-wants">Wants & Fun ($)</label>
               <input type="number" id="input-wants" value="1000" placeholder="1000" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-savings">Investments & Savings ($)</label>
+              <label for="input-savings">Savings & Investments ($)</label>
               <input type="number" id="input-savings" value="1500" placeholder="1500" class="font-mono" />
             </div>
           </div>
           <button class="btn-primary" id="update-budget-btn">
             <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Update Metrics</span>
+            <span>Update Budget</span>
           </button>
         </div>
       </section>
@@ -160,7 +160,7 @@
       <section id="tab-advisor" class="tab-page">
         <div class="page-title">
           <h1>AI Financial Adviser</h1>
-          <p>Consult with the AI financial intelligence model regarding strategy and budgeting.</p>
+          <p>Ask any question about budgeting, savings, investments, or debt payoff.</p>
         </div>
 
         <div class="chat-wrapper">
@@ -170,24 +170,24 @@
                 <i class="fa-solid fa-robot"></i>
               </div>
               <div class="msg-bubble">
-                <div class="msg-text">Welcome to AuraFin Advisory. How can I assist you with your cashflow, debt payoff, or savings allocation today?</div>
+                <div class="msg-text">Welcome to AuraFin Advisory. How can I assist you with your financial planning today?</div>
                 <div class="msg-time">Just now</div>
               </div>
             </div>
           </div>
 
           <div class="suggestion-chips">
-            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund?')">Emergency Reserve Strategy</button>
-            <button class="chip" onclick="askQuickQuestion('Explain Avalanche vs Snowball debt payoff strategy')">Debt Repayment Models</button>
-            <button class="chip" onclick="askQuickQuestion('How should I invest $500/month as a beginner?')">Beginner Investment Allocation</button>
-            <button class="chip" onclick="askQuickQuestion('How can I reduce my monthly grocery bill?')">Expense Reduction</button>
+            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund?')">Emergency Fund Strategy</button>
+            <button class="chip" onclick="askQuickQuestion('Explain Avalanche vs Snowball debt payoff strategy')">Debt Payoff Methods</button>
+            <button class="chip" onclick="askQuickQuestion('How should I invest $500/month as a beginner?')">Beginner Investing Tips</button>
+            <button class="chip" onclick="askQuickQuestion('How can I reduce my monthly grocery bill?')">Cut Expenses</button>
           </div>
 
           <form id="chat-form" class="chat-input-bar">
             <input type="text" id="chat-input" placeholder="Ask a financial question..." autocomplete="off" required />
             <button type="submit" class="btn-primary">
               <i class="fa-solid fa-paper-plane"></i>
-              <span>Submit Query</span>
+              <span>Send</span>
             </button>
           </form>
         </div>
@@ -196,8 +196,8 @@
       <!-- TAB 3: SAVINGS GOALS -->
       <section id="tab-goals" class="tab-page">
         <div class="page-title">
-          <h1>Capital Reserve Goals</h1>
-          <p>Track allocation targets for major expenditure and investment reserves.</p>
+          <h1>Savings Goals</h1>
+          <p>Set and track target savings goals for your future milestones.</p>
         </div>
 
         <div class="goals-grid" id="goals-container">
@@ -205,18 +205,18 @@
         </div>
 
         <div class="content-card margin-top">
-          <h3>Create Target Milestone</h3>
+          <h3>Add New Savings Goal</h3>
           <form id="goal-form" class="form-grid">
             <div class="form-group">
-              <label for="goal-name">Milestone Description</label>
-              <input type="text" id="goal-name" placeholder="e.g. Capital Reserve / Property Down Payment" required />
+              <label for="goal-name">Goal Name</label>
+              <input type="text" id="goal-name" placeholder="e.g. Emergency Fund / House Deposit" required />
             </div>
             <div class="form-group">
-              <label for="goal-target">Target Reserve ($)</label>
+              <label for="goal-target">Target Amount ($)</label>
               <input type="number" id="goal-target" class="font-mono" placeholder="10000" required />
             </div>
             <div class="form-group">
-              <label for="goal-current">Current Capital ($)</label>
+              <label for="goal-current">Saved So Far ($)</label>
               <input type="number" id="goal-current" class="font-mono" placeholder="0" value="0" required />
             </div>
             <div class="form-group">
@@ -232,30 +232,30 @@
       <!-- TAB 4: 50/30/20 PLANNER -->
       <section id="tab-calculator" class="tab-page">
         <div class="page-title">
-          <h1>50/30/20 Capital Distribution Framework</h1>
-          <p>Standard benchmark allocation calculated from current income.</p>
+          <h1>50/30/20 Budget Rule</h1>
+          <p>A simple formula to manage your money effectively every month.</p>
         </div>
 
         <div class="content-card">
           <div class="rule-explanation">
             <div class="rule-box">
               <div class="rule-pct font-mono">50%</div>
-              <h4>Fixed Needs</h4>
-              <p>Housing, Utilities, Debt Minimums, Essential Groceries</p>
+              <h4>Needs & Bills</h4>
+              <p>Rent, Utilities, Minimum Debt, Groceries</p>
               <div class="rule-amount font-mono" id="rule-needs-val">$2,500</div>
             </div>
 
             <div class="rule-box">
               <div class="rule-pct font-mono">30%</div>
-              <h4>Discretionary</h4>
-              <p>Personal Expenditure, Dining, Entertainment, Subscriptions</p>
+              <h4>Wants & Fun</h4>
+              <p>Dining out, Shopping, Movies, Hobbies</p>
               <div class="rule-amount font-mono" id="rule-wants-val">$1,500</div>
             </div>
 
             <div class="rule-box">
               <div class="rule-pct font-mono">20%</div>
-              <h4>Wealth Accumulation</h4>
-              <p>Emergency Reserve, Retirement Accounts, Index Funds</p>
+              <h4>Savings & Future</h4>
+              <p>Emergency Fund, Retirement, Investments</p>
               <div class="rule-amount font-mono" id="rule-savings-val">$1,000</div>
             </div>
           </div>
@@ -268,11 +268,11 @@
   <div class="modal-overlay" id="settings-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3>Model API Settings</h3>
+        <h3>Gemini API Settings</h3>
         <button class="modal-close" id="close-settings-btn">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Configure custom Gemini API integration for live response generation. If unconfigured, the internal financial intelligence engine executes responses locally.</p>
+        <p>Optionally add a custom Gemini API Key for live AI chat responses. If left empty, the built-in AI adviser provides instant answers.</p>
         <div class="form-group">
           <label for="gemini-api-key">Gemini API Key</label>
           <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="font-mono" />
