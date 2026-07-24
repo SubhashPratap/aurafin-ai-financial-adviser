@@ -1,32 +1,34 @@
 :root {
-  /* Matching RoamCraft Minimalist Dark Slate & Terracotta Theme */
-  --bg-main: #141312;           /* Deep Sand Canvas */
-  --bg-sidebar: #1d1b18;        /* Navigation Surface */
-  --bg-card: #25221f;           /* Card Surface */
-  --bg-card-hover: #2f2b27;     /* Hover Surface */
-  --bg-input: #0d0c0b;          /* Input Field Surface */
+  /* 100% Solid Corporate Professional White Theme (No Transparency, No Gradients) */
+  --bg-main: #f8fafc;           /* Crisp Solid Off-White Background */
+  --bg-sidebar: #ffffff;        /* Solid Pure White Sidebar */
+  --bg-card: #ffffff;           /* Solid Pure White Cards */
+  --bg-card-hover: #f1f5f9;     /* Solid Light Hover */
+  --bg-input: #ffffff;          /* Solid Input Background */
   
-  --border: #36302b;            /* Structural Solid Border */
-  --border-focus: #e05638;      /* Terracotta Focus Border */
+  --border: #cbd5e1;            /* Crisp Clear Solid Border */
+  --border-dark: #94a3b8;       /* Strong Border Accent */
+  --border-focus: #2563eb;      /* Solid Focus Border */
   
-  --primary: #e05638;           /* Solid Terracotta Primary Accent */
-  --primary-hover: #f06748;
-  --primary-light: #2c1b18;
+  /* Primary Solid Brand Accent: Corporate Blue */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
 
-  --success: #10b981;
-  --success-light: #122820;
+  --success: #16a34a;
+  --success-light: #f0fdf4;
 
-  --warning: #d99b26;           /* Ochre Gold Warning */
-  --warning-light: #282114;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
 
-  --text-main: #f5f2eb;         /* Off-White Sand Text */
-  --text-muted: #a39b8f;        /* Muted Sand Text */
-  --text-dim: #70685d;          /* Subdued Label Text */
+  --text-main: #0f172a;         /* High Contrast Dark Text */
+  --text-muted: #475569;
+  --text-dim: #64748b;
 
   --radius-sm: 6px;
   --radius-md: 10px;
 
-  /* Typography Matching RoamCraft Suite */
+  /* Typography Matching RoamCraft Suite Structure */
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
@@ -526,20 +528,20 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .msg-bubble {
-  background-color: var(--bg-input);
+  background-color: var(--bg-main);
   border: 2px solid var(--border);
   padding: 14px 18px;
   border-radius: var(--radius-md);
   font-size: 0.95rem;
   line-height: 1.55;
-  color: #f5f2eb !important;
+  color: var(--text-main) !important;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
 .msg-text {
-  color: #f5f2eb !important;
+  color: var(--text-main) !important;
   font-family: var(--font-body);
 }
 
@@ -573,7 +575,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .chip {
-  background-color: var(--bg-input);
+  background-color: var(--bg-main);
   border: 1.5px solid var(--border);
   color: var(--text-muted);
   padding: 7px 14px;
