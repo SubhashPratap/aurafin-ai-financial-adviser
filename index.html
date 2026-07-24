@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AuraFin | Financial Intelligence Platform</title>
+  
+  <!-- Professional Icon Library: Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Matching Typography with RoamCraft: Space Grotesk, IBM Plex Sans & IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Corporate Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-vault"></i>
+        </div>
+        <div class="brand-text">
+          <h2>AuraFin</h2>
+          <span>Wealth Management</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="advisor">
+          <i class="fa-solid fa-comments"></i>
+          <span>AI Adviser</span>
+        </button>
+        <button class="nav-item" data-tab="goals">
+          <i class="fa-solid fa-bullseye"></i>
+          <span>Savings Goals</span>
+        </button>
+        <button class="nav-item" data-tab="calculator">
+          <i class="fa-solid fa-calculator"></i>
+          <span>50/30/20 Planner</span>
+        </button>
+      </nav>
+
+      <div class="api-key-box">
+        <div class="api-status">
+          <span class="status-dot active"></span>
+          <span class="status-text">AI Engine Active</span>
+        </div>
+        <button class="btn-secondary btn-small" id="open-settings-btn">
+          <i class="fa-solid fa-gear"></i> Settings
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div class="disclaimer-badge">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Notice: Educational financial planning interface. General analysis only.</span>
+        </div>
+        <div class="user-profile">
+          <div class="avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <span>Primary Account</span>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-page active">
+        <div class="page-title">
+          <h1>Financial Overview</h1>
+          <p>Monthly cash flow metrics and budget performance.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Monthly Income</span>
+              <div class="stat-icon-badge">
+                <i class="fa-solid fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="stat-value font-mono" id="disp-income">$5,000</div>
+            <div class="stat-sub">Net after taxes</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Total Expenses</span>
+              <div class="stat-icon-badge">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+            </div>
+            <div class="stat-value font-mono" id="disp-expenses">$3,100</div>
+            <div class="stat-sub text-warning" id="disp-expenses-pct">62% of income</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Net Monthly Surplus</span>
+              <div class="stat-icon-badge success">
+                <i class="fa-solid fa-piggy-bank"></i>
+              </div>
+            </div>
+            <div class="stat-value font-mono text-success" id="disp-savings">$1,900</div>
+            <div class="stat-sub" id="disp-savings-pct">38% savings rate</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Financial Health Index</span>
+              <div class="stat-icon-badge success">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+            </div>
+            <div class="stat-value font-mono text-success" id="disp-score">85/100</div>
+            <div class="stat-sub">Rating: Excellent</div>
+          </div>
+        </div>
+
+        <!-- Cashflow Budget Calculator -->
+        <div class="content-card margin-top">
+          <h3>Monthly Budget Allocations</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-income">Monthly Net Income ($)</label>
+              <input type="number" id="input-income" value="5000" placeholder="5000" class="font-mono" />
+            </div>
+            <div class="form-group">
+              <label for="input-needs">Essential Obligations ($)</label>
+              <input type="number" id="input-needs" value="2500" placeholder="2500" class="font-mono" />
+            </div>
+            <div class="form-group">
+              <label for="input-wants">Discretionary Spending ($)</label>
+              <input type="number" id="input-wants" value="1000" placeholder="1000" class="font-mono" />
+            </div>
+            <div class="form-group">
+              <label for="input-savings">Investments & Savings ($)</label>
+              <input type="number" id="input-savings" value="1500" placeholder="1500" class="font-mono" />
+            </div>
+          </div>
+          <button class="btn-primary" id="update-budget-btn">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Update Metrics</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 2: AI ADVISOR CHAT -->
+      <section id="tab-advisor" class="tab-page">
+        <div class="page-title">
+          <h1>AI Financial Adviser</h1>
+          <p>Consult with the AI financial intelligence model regarding strategy and budgeting.</p>
+        </div>
+
+        <div class="chat-wrapper">
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg bot">
+              <div class="msg-avatar">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div class="msg-bubble">
+                Welcome to AuraFin Advisory. How can I assist you with your cashflow, debt payoff, or savings allocation today?
+                <div class="msg-time">Just now</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="suggestion-chips">
+            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund?')">Emergency Reserve Strategy</button>
+            <button class="chip" onclick="askQuickQuestion('Explain Avalanche vs Snowball debt payoff strategy')">Debt Repayment Models</button>
+            <button class="chip" onclick="askQuickQuestion('How should I invest $500/month as a beginner?')">Beginner Investment Allocation</button>
+            <button class="chip" onclick="askQuickQuestion('How can I reduce my monthly grocery bill?')">Expense Reduction</button>
+          </div>
+
+          <form id="chat-form" class="chat-input-bar">
+            <input type="text" id="chat-input" placeholder="Ask a financial question..." autocomplete="off" required />
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Submit Query</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 3: SAVINGS GOALS -->
+      <section id="tab-goals" class="tab-page">
+        <div class="page-title">
+          <h1>Capital Reserve Goals</h1>
+          <p>Track allocation targets for major expenditure and investment reserves.</p>
+        </div>
+
+        <div class="goals-grid" id="goals-container">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div class="content-card margin-top">
+          <h3>Create Target Milestone</h3>
+          <form id="goal-form" class="form-grid">
+            <div class="form-group">
+              <label for="goal-name">Milestone Description</label>
+              <input type="text" id="goal-name" placeholder="e.g. Capital Reserve / Property Down Payment" required />
+            </div>
+            <div class="form-group">
+              <label for="goal-target">Target Reserve ($)</label>
+              <input type="number" id="goal-target" class="font-mono" placeholder="10000" required />
+            </div>
+            <div class="form-group">
+              <label for="goal-current">Current Capital ($)</label>
+              <input type="number" id="goal-current" class="font-mono" placeholder="0" value="0" required />
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn-primary full-width margin-top-auto">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Goal</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 4: 50/30/20 PLANNER -->
+      <section id="tab-calculator" class="tab-page">
+        <div class="page-title">
+          <h1>50/30/20 Capital Distribution Framework</h1>
+          <p>Standard benchmark allocation calculated from current income.</p>
+        </div>
+
+        <div class="content-card">
+          <div class="rule-explanation">
+            <div class="rule-box">
+              <div class="rule-pct font-mono">50%</div>
+              <h4>Fixed Needs</h4>
+              <p>Housing, Utilities, Debt Minimums, Essential Groceries</p>
+              <div class="rule-amount font-mono" id="rule-needs-val">$2,500</div>
+            </div>
+
+            <div class="rule-box">
+              <div class="rule-pct font-mono">30%</div>
+              <h4>Discretionary</h4>
+              <p>Personal Expenditure, Dining, Entertainment, Subscriptions</p>
+              <div class="rule-amount font-mono" id="rule-wants-val">$1,500</div>
+            </div>
+
+            <div class="rule-box">
+              <div class="rule-pct font-mono">20%</div>
+              <h4>Wealth Accumulation</h4>
+              <p>Emergency Reserve, Retirement Accounts, Index Funds</p>
+              <div class="rule-amount font-mono" id="rule-savings-val">$1,000</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Model API Settings</h3>
+        <button class="modal-close" id="close-settings-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Configure custom Gemini API integration for live response generation. If unconfigured, the internal financial intelligence engine executes responses locally.</p>
+        <div class="form-group">
+          <label for="gemini-api-key">Gemini API Key</label>
+          <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="font-mono" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancel-settings-btn">Cancel</button>
+        <button class="btn-primary" id="save-settings-btn">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

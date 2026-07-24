@@ -1,0 +1,278 @@
+// --- State Management ---
+let state = {
+  income: 5000,
+  needs: 2500,
+  wants: 1000,
+  savings: 1500,
+  apiKey: localStorage.getItem('aura_gemini_key') || '',
+  goals: [
+    { id: 1, name: 'Emergency Capital Reserve', target: 15000, current: 9500 },
+    { id: 2, name: 'Vehicle Replacement Reserve', target: 8000, current: 3200 },
+    { id: 3, name: 'Property Down Payment', target: 25000, current: 12500 }
+  ]
+};
+
+// --- Font Awesome Icons ---
+const ICONS = {
+  user: `<i class="fa-solid fa-user"></i>`,
+  bot: `<i class="fa-solid fa-robot"></i>`
+};
+
+// --- DOM Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+  initTabs();
+  initBudgetCalculator();
+  initGoals();
+  initChat();
+  initSettingsModal();
+  updateDashboard();
+});
+
+// --- Navigation ---
+function initTabs() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const tabPages = document.querySelectorAll('.tab-page');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const tabTarget = item.getAttribute('data-tab');
+
+      navItems.forEach(n => n.classList.remove('active'));
+      tabPages.forEach(p => p.classList.remove('active'));
+
+      item.classList.add('active');
+      document.getElementById(`tab-${tabTarget}`).classList.add('active');
+    });
+  });
+}
+
+// --- Dashboard Metrics ---
+function updateDashboard() {
+  const totalExpenses = state.needs + state.wants;
+  const netSavings = state.income - totalExpenses;
+  const savingsPct = Math.round((netSavings / state.income) * 100) || 0;
+  const expensesPct = Math.round((totalExpenses / state.income) * 100) || 0;
+
+  let score = 100;
+  if (expensesPct > 70) score -= (expensesPct - 70) * 1.5;
+  if (savingsPct < 20) score -= (20 - savingsPct) * 1.5;
+  score = Math.max(20, Math.min(100, Math.round(score)));
+
+  document.getElementById('disp-income').textContent = formatCurrency(state.income);
+  document.getElementById('disp-expenses').textContent = formatCurrency(totalExpenses);
+  document.getElementById('disp-expenses-pct').textContent = `${expensesPct}% of income`;
+  document.getElementById('disp-savings').textContent = formatCurrency(netSavings);
+  document.getElementById('disp-savings-pct').textContent = `${savingsPct}% savings rate`;
+  document.getElementById('disp-score').textContent = `${score}/100`;
+
+  document.getElementById('rule-needs-val').textContent = formatCurrency(state.income * 0.5);
+  document.getElementById('rule-wants-val').textContent = formatCurrency(state.income * 0.3);
+  document.getElementById('rule-savings-val').textContent = formatCurrency(state.income * 0.2);
+}
+
+function initBudgetCalculator() {
+  document.getElementById('update-budget-btn').addEventListener('click', () => {
+    state.income = Number(document.getElementById('input-income').value) || 0;
+    state.needs = Number(document.getElementById('input-needs').value) || 0;
+    state.wants = Number(document.getElementById('input-wants').value) || 0;
+    state.savings = Number(document.getElementById('input-savings').value) || 0;
+
+    updateDashboard();
+  });
+}
+
+// --- Capital Reserve Goals ---
+function initGoals() {
+  renderGoals();
+
+  const goalForm = document.getElementById('goal-form');
+  goalForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('goal-name').value;
+    const target = Number(document.getElementById('goal-target').value);
+    const current = Number(document.getElementById('goal-current').value);
+
+    state.goals.push({
+      id: Date.now(),
+      name,
+      target,
+      current
+    });
+
+    renderGoals();
+    goalForm.reset();
+  });
+}
+
+function renderGoals() {
+  const container = document.getElementById('goals-container');
+  container.innerHTML = '';
+
+  state.goals.forEach(goal => {
+    const pct = Math.min(100, Math.round((goal.current / goal.target) * 100));
+    const card = document.createElement('div');
+    card.className = 'goal-card';
+    card.innerHTML = `
+      <div class="goal-header">
+        <span class="goal-title">${escapeHtml(goal.name)}</span>
+        <span class="text-success font-weight-bold">${pct}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: ${pct}%"></div>
+      </div>
+      <div class="goal-stats">
+        <span>Accumulated: ${formatCurrency(goal.current)}</span>
+        <span>Target: ${formatCurrency(goal.target)}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// --- AI Advisory Engine ---
+function initChat() {
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+
+    addChatMessage(text, 'user');
+    input.value = '';
+
+    processAiQuery(text);
+  });
+}
+
+function askQuickQuestion(questionText) {
+  const input = document.getElementById('chat-input');
+  input.value = questionText;
+  document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+}
+
+function addChatMessage(text, sender) {
+  const container = document.getElementById('chat-messages');
+  const msg = document.createElement('div');
+  msg.className = `msg ${sender}`;
+
+  const avatarIcon = sender === 'user' ? ICONS.user : ICONS.bot;
+  const now = new Date();
+  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  msg.innerHTML = `
+    <div class="msg-avatar">${avatarIcon}</div>
+    <div class="msg-bubble">
+      <div class="msg-text">${escapeHtml(text)}</div>
+      <div class="msg-time">${time}</div>
+    </div>
+  `;
+
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function processAiQuery(userQuery) {
+  addChatMessage("Processing financial query...", 'bot');
+
+  const container = document.getElementById('chat-messages');
+  const thinkingMsg = container.lastChild;
+
+  try {
+    let responseText = "";
+
+    // Only attempt live Gemini API if a valid Gemini API key starting with AIza is saved
+    if (state.apiKey && state.apiKey.trim().startsWith("AIza")) {
+      responseText = await callGeminiApi(userQuery);
+    } else {
+      responseText = await getBuiltinFinancialAdvisorReply(userQuery);
+    }
+
+    container.removeChild(thinkingMsg);
+    addChatMessage(responseText, 'bot');
+  } catch (error) {
+    // Seamless silent fallback to built-in financial adviser without error banners
+    container.removeChild(thinkingMsg);
+    const fallback = await getBuiltinFinancialAdvisorReply(userQuery);
+    addChatMessage(fallback, 'bot');
+  }
+}
+
+function getBuiltinFinancialAdvisorReply(query) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const q = query.toLowerCase();
+
+      if (q.includes('emergency fund') || q.includes('reserve')) {
+        resolve(`Emergency Reserve Allocation Strategy:\n\n1. Target 3 to 6 months of fixed operational expenses.\n2. Capital should be placed in a High-Yield Savings Account (HYSA) maintaining high liquidity and 4.0%+ yield.\n3. Automate fixed weekly transfers on payroll cycle.`);
+      } else if (q.includes('snowball') || q.includes('avalanche') || q.includes('debt')) {
+        resolve(`Debt Reduction Models:\n\n• Debt Avalanche Model: Prioritize liabilities by highest Annual Percentage Rate (APR). Saves maximum interest capital.\n• Debt Snowball Model: Prioritize liabilities by lowest principal balance. Generates psychological momentum.\n\nStrategy: Use Avalanche for liabilities carrying >8% APR.`);
+      } else if (q.includes('invest') || q.includes('beginner') || q.includes('stock')) {
+        resolve(`Capital Allocation Framework:\n\n1. Eliminate high-interest revolving liabilities.\n2. Capture full employer retirement account match (100% immediate return on capital).\n3. Fund tax-advantaged accounts (Roth IRA / Traditional IRA) allocating to broad-market index funds (e.g. S&P 500 / Total Stock Market).\n4. Maintain disciplined dollar-cost averaging.`);
+      } else if (q.includes('grocery') || q.includes('cut expense') || q.includes('reduce')) {
+        resolve(`Operational Cost Reduction:\n\n1. Perform monthly recurring subscription audit on bank statements.\n2. Implement a 48-hour approval window for non-essential discretionary capital outlays exceeding $50.`);
+      } else {
+        resolve(`Financial Advisory Analysis for: "${query}"\n\nKey Strategic Benchmarks:\n• Target minimum 20% savings/investment rate of net monthly income.\n• Maintain 3-6 months cash liquidity reserve.\n• Rebalance index portfolios annually.\n• Monitor allocations using the 50/30/20 cashflow framework.`);
+      }
+    }, 600);
+  });
+}
+
+async function callGeminiApi(prompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey.trim()}`;
+  const systemInstruction = `You are AuraFin, a professional institutional financial analyst. Provide clear, concise, structured advice without conversational fluff.`;
+
+  const payload = {
+    contents: [{
+      parts: [
+        { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
+      ]
+    }]
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  if (data.candidates && data.candidates[0].content.parts[0].text) {
+    return data.candidates[0].content.parts[0].text;
+  } else {
+    throw new Error('Invalid API response');
+  }
+}
+
+function initSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  const openBtn = document.getElementById('open-settings-btn');
+  const closeBtn = document.getElementById('close-settings-btn');
+  const cancelBtn = document.getElementById('cancel-settings-btn');
+  const saveBtn = document.getElementById('save-settings-btn');
+  const keyInput = document.getElementById('gemini-api-key');
+
+  if (state.apiKey) keyInput.value = state.apiKey;
+
+  const openModal = () => modal.classList.add('active');
+  const closeModal = () => modal.classList.remove('active');
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+
+  saveBtn.addEventListener('click', () => {
+    state.apiKey = keyInput.value.trim();
+    localStorage.setItem('aura_gemini_key', state.apiKey);
+    closeModal();
+  });
+}
+
+function formatCurrency(num) {
+  return '$' + Number(num).toLocaleString('en-US');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

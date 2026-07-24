@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AuraFin AI Financial Adviser - Project Description</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 20mm 20mm 20mm;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #0f172a;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+    .header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+    .header h1 {
+      font-size: 26px;
+      color: #0f172a;
+      margin: 0 0 5px 0;
+    }
+    .header p {
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+      background-color: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+    }
+    .meta-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .meta-table tr:last-child td {
+      border-bottom: none;
+    }
+    .meta-label {
+      font-weight: 700;
+      color: #475569;
+      width: 30%;
+    }
+    h2 {
+      font-size: 18px;
+      color: #0f172a;
+      border-left: 4px solid #2563eb;
+      padding-left: 10px;
+      margin-top: 25px;
+      margin-bottom: 12px;
+    }
+    p, li {
+      font-size: 13.5px;
+      color: #334155;
+    }
+    ul {
+      margin-top: 5px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .box {
+      background-color: #eff6ff;
+      border: 1.5px solid #2563eb;
+      border-radius: 6px;
+      padding: 14px;
+      margin: 15px 0;
+    }
+    .box-title {
+      font-weight: 700;
+      color: #1d4ed8;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .code-block {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: Consolas, monospace;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .footer {
+      margin-top: 40px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 12px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>AuraFin — AI Financial Adviser Platform</h1>
+    <p>Internship Project Documentation & Technical Description</p>
+  </div>
+
+  <table class="meta-table">
+    <tr>
+      <td class="meta-label">Project Name:</td>
+      <td>AuraFin AI Financial Adviser</td>
+    </tr>
+    <tr>
+      <td class="meta-label">Author / Developer:</td>
+      <td>Subhash Pratap</td>
+    </tr>
+    <tr>
+      <td class="meta-label">Live Deployment URL:</td>
+      <td><a href="https://subhashpratap.github.io/aurafin-ai-financial-adviser/">https://subhashpratap.github.io/aurafin-ai-financial-adviser/</a></td>
+    </tr>
+    <tr>
+      <td class="meta-label">GitHub Repository:</td>
+      <td><a href="https://github.com/SubhashPratap/aurafin-ai-financial-adviser">https://github.com/SubhashPratap/aurafin-ai-financial-adviser</a></td>
+    </tr>
+    <tr>
+      <td class="meta-label">Technology Stack:</td>
+      <td>HTML5, CSS3 (Solid Corporate System), Vanilla JS (ES6+), Font Awesome 6, Google Gemini API</td>
+    </tr>
+  </table>
+
+  <h2>1. Executive Summary</h2>
+  <p>
+    <strong>AuraFin</strong> is an intelligent, responsive personal finance and wealth management platform designed to help users monitor cash flows, evaluate financial health scores, track milestone savings goals, and receive instant AI-driven financial advisory. Built with modular web architecture and high-contrast solid corporate styling, AuraFin provides an accessible, low-latency financial planning interface.
+  </p>
+
+  <h2>2. Key Features & Core Functionality</h2>
+  <ul>
+    <li><strong>Financial Overview Dashboard:</strong> Real-time tracking of Monthly Income, Total Expenses, Net Monthly Surplus, and an automated 0–100 Financial Health Index calculation.</li>
+    <li><strong>Interactive Budget Recalculator:</strong> Dynamic state update engine that recalculates savings rates, expense ratios, and financial health scores upon input modification.</li>
+    <li><strong>AI Financial Adviser Engine:</strong> Interactive chat interface providing instant structured guidance on budgeting strategies (50/30/20 rule), emergency funds, debt payoff models (Avalanche vs. Snowball), and investment fundamentals.</li>
+    <li><strong>Custom Gemini API Integration:</strong> Support for user-provided Google Gemini API keys via a dedicated Settings modal, with a built-in local financial intelligence engine fallback.</li>
+    <li><strong>Capital Reserve Goal Tracker:</strong> Custom savings milestone management featuring dynamic progress bars and percentage completion tracking.</li>
+    <li><strong>50/30/20 Capital Distribution Planner:</strong> Automatic benchmark allocation for Fixed Needs (50%), Discretionary Wants (30%), and Wealth Accumulation (20%).</li>
+  </ul>
+
+  <h2>3. System Architecture & UI Design System</h2>
+  <div class="box">
+    <div class="box-title">Design Philosophy & Standards</div>
+    <p style="margin:0;">
+      AuraFin adheres to modern corporate fintech aesthetics (inspired by platforms like Stripe and Ramp). It avoids tacky gradients and backdrop blurs in favor of 100% solid color surfaces, 2px crisp borders, DM Sans typography, and Font Awesome vector icons for maximum legibility and professional evaluation.
+    </p>
+  </div>
+
+  <h2>4. File & Codebase Structure</h2>
+  <div class="code-block">
+SUBAHSH_PROJECT_ITR/
+├── index.html        # Modular UI Structure & Font Awesome Vector Icons
+├── style.css         # 100% Solid Corporate Theme & Layout Rules
+├── app.js            # Reactive Application State & AI Advisory Engine
+└── README.md         # Full Technical Documentation & Instructions
+  </div>
+
+  <h2>5. Verification & Live Deployment</h2>
+  <p>
+    The application has been deployed live via GitHub Pages and verified for cross-browser compatibility and desktop/mobile responsiveness.
+  </p>
+
+  <div class="footer">
+    AuraFin AI Financial Adviser Platform &bull; Subhash Pratap Internship Submission Document &bull; Generated July 2026
+  </div>
+
+</body>
+</html>
