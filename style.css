@@ -6,7 +6,7 @@
   --bg-card-hover: #f1f5f9;     /* Solid Light Hover */
   --bg-input: #ffffff;          /* Solid Input Background */
   
-  --border: #cbd5e1;            /* Crisp Clear Solid Border */
+  --border: #e2e8f0;            /* Clean Light Border */
   --border-dark: #94a3b8;       /* Strong Border Accent */
   --border-focus: #2563eb;      /* Solid Focus Border */
   
@@ -27,6 +27,7 @@
 
   --radius-sm: 6px;
   --radius-md: 10px;
+  --radius-lg: 16px;
 
   /* Typography Matching RoamCraft Suite Structure */
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
@@ -70,7 +71,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   width: 250px;
   flex-shrink: 0;
   background-color: var(--bg-sidebar);
-  border-right: 2px solid var(--border);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   padding: 24px 16px;
@@ -154,11 +155,11 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 .nav-item.active {
   background-color: var(--primary-light);
   color: var(--primary);
-  border: 1px solid var(--primary);
+  border: 1px solid var(--primary-light);
 }
 
 .api-key-box {
-  border-top: 2px solid var(--border);
+  border-top: 1px solid var(--border);
   padding-top: 16px;
   display: flex;
   flex-direction: column;
@@ -201,13 +202,13 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   align-items: center;
   margin-bottom: 28px;
   padding-bottom: 18px;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
   gap: 16px;
 }
 
 .disclaimer-badge {
   background-color: var(--warning-light);
-  border: 1.5px solid var(--warning);
+  border: 1px solid var(--warning);
   color: var(--warning);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
@@ -230,7 +231,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   background-color: var(--bg-card);
   padding: 8px 16px;
   border-radius: 20px;
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-main);
@@ -291,7 +292,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .stat-card {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 18px 20px;
   display: flex;
@@ -358,7 +359,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 /* Content Cards & Forms */
 .content-card {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 24px 28px;
 }
@@ -405,7 +406,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .form-group input {
   background-color: var(--bg-input);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   color: var(--text-main);
@@ -423,7 +424,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 .btn-primary {
   background-color: var(--primary);
   color: #ffffff;
-  border: 2px solid var(--primary);
+  border: none;
   padding: 10px 20px;
   border-radius: var(--radius-sm);
   font-weight: 700;
@@ -442,12 +443,11 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
 }
 
 .btn-secondary {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   color: var(--text-main);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
@@ -469,11 +469,11 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 .full-width { width: 100%; }
 .margin-top-auto { margin-top: auto; }
 
-/* Advisor Chat Interface */
+/* Simple Clean AI Advisor Chat Interface (ChatGPT / Claude Style) */
 .chat-wrapper {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -493,7 +493,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 .msg {
   display: flex;
   gap: 12px;
-  max-width: 85%;
+  max-width: 82%;
   align-items: flex-start;
 }
 
@@ -506,50 +506,48 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   align-self: flex-start;
 }
 
+/* Simple clean avatars without heavy outer borders */
 .msg-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background-color: var(--primary-light);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.95rem;
   flex-shrink: 0;
-  margin-top: 0;
-  border: 1.5px solid var(--border);
 }
 
 .msg.user .msg-avatar {
-  background-color: var(--bg-sidebar);
-  border: 1.5px solid var(--border);
+  background-color: var(--bg-main);
   color: var(--text-main);
 }
 
+/* Simple clean speech bubbles */
 .msg-bubble {
-  background-color: var(--bg-main);
-  border: 2px solid var(--border);
-  padding: 14px 18px;
-  border-radius: var(--radius-md);
+  background-color: #f1f5f9;  /* Soft clean grey for bot */
+  border: none;
+  padding: 12px 18px;
+  border-radius: var(--radius-lg);
   font-size: 0.95rem;
-  line-height: 1.55;
-  color: var(--text-main) !important;
+  line-height: 1.5;
+  color: #0f172a;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .msg-text {
-  color: var(--text-main) !important;
+  color: #0f172a !important;
   font-family: var(--font-body);
 }
 
 .msg.user .msg-bubble {
-  background-color: var(--primary);
+  background-color: var(--primary); /* Corporate Blue for user */
   color: #ffffff !important;
-  border: 2px solid var(--primary);
-  font-weight: 500;
+  border-radius: var(--radius-lg);
 }
 
 .msg.user .msg-text {
@@ -557,8 +555,8 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .msg-time {
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.7rem;
+  color: var(--text-dim);
   align-self: flex-end;
   font-family: var(--font-mono);
 }
@@ -567,6 +565,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   color: rgba(255, 255, 255, 0.85);
 }
 
+/* Simple pill suggestion chips */
 .suggestion-chips {
   display: flex;
   gap: 8px;
@@ -575,23 +574,24 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .chip {
-  background-color: var(--bg-main);
-  border: 1.5px solid var(--border);
+  background-color: #f1f5f9;
+  border: none;
   color: var(--text-muted);
-  padding: 7px 14px;
+  padding: 8px 16px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .chip:hover {
   background-color: var(--primary-light);
   color: var(--primary);
-  border-color: var(--primary);
 }
 
+/* Simple clean input bar */
 .chat-input-bar {
   display: flex;
   gap: 10px;
@@ -599,10 +599,10 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .chat-input-bar input {
   flex: 1;
-  background-color: var(--bg-input);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
+  background-color: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 12px 20px;
   color: var(--text-main);
   font-size: 0.95rem;
   font-family: var(--font-body);
@@ -610,7 +610,13 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .chat-input-bar input:focus {
-  border-color: var(--border-focus);
+  border-color: var(--primary);
+  background-color: #ffffff;
+}
+
+.chat-input-bar button {
+  border-radius: 24px;
+  padding: 12px 24px;
 }
 
 /* Goals Grid */
@@ -622,7 +628,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .goal-card {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 20px;
 }
@@ -643,7 +649,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .progress-bar-bg {
   background-color: var(--bg-main);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   height: 10px;
   border-radius: 5px;
   overflow: hidden;
@@ -680,7 +686,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .rule-box {
   background-color: var(--bg-main);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 24px;
   text-align: center;
@@ -735,7 +741,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 
 .modal {
   background-color: var(--bg-card);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   width: 90%;
   max-width: 460px;
