@@ -207,33 +207,32 @@ async function callGeminiApi(prompt) {
     }]
   };
 
-  // Step 1: Dynamically query Google Gemini ListModels API to discover compatible models for this key
-  let targetModelPath = null;
+  // Step 1: Query ListModels dynamically to get compatible model names for this key
+  let candidateModels = [
+    'models/gemma-4-26b-a4b-it',
+    'models/gemma-4-31b-it',
+    'models/gemini-2.0-flash',
+    'models/gemini-1.5-flash-latest'
+  ];
+
   try {
     const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
     const modelsData = await modelsRes.json();
     if (modelsData.models && Array.isArray(modelsData.models)) {
-      const compatibleModel = modelsData.models.find(m => 
-        m.supportedGenerationMethods && 
-        m.supportedGenerationMethods.includes("generateContent") &&
-        (m.name.includes("gemini") || m.name.includes("flash") || m.name.includes("pro"))
-      );
-      if (compatibleModel && compatibleModel.name) {
-        targetModelPath = compatibleModel.name; // e.g. "models/gemini-1.5-flash-latest" or "models/gemini-pro"
-      }
+      const dynamicList = modelsData.models
+        .filter(m => m.name)
+        .map(m => m.name);
+      
+      // Put discovered models at top of search list
+      candidateModels = Array.from(new Set([...dynamicList, ...candidateModels]));
     }
   } catch (e) {
-    console.warn("Dynamic ListModels check failed, falling back to static endpoints:", e);
+    console.warn("ListModels fetch warning:", e);
   }
-
-  // Step 2: Build candidate list with dynamically discovered model first
-  const modelsToTry = targetModelPath 
-    ? [targetModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-pro']
-    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-pro'];
 
   let lastError = null;
 
-  for (const modelPath of modelsToTry) {
+  for (const modelPath of candidateModels) {
     try {
       const cleanPath = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
       const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
