@@ -100,16 +100,14 @@ window.callGeminiApi = async function(userPrompt) {
   const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
   const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User context: ${contextLine} Give 2-3 short bullet points of simple, direct, practical advice. No jargon. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
 
-  // Discard any cached Gemma model paths to prevent locking onto Gemma
+  // Verify cached active model path
   if (window.state.activeModelPath && window.state.activeModelPath.includes('gemma')) {
     window.state.activeModelPath = 'models/gemini-flash-latest';
   }
 
-
   const candidateModels = window.state.activeModelPath
     ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
     : ['models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest'];
-
 
   let lastError = null;
 
@@ -148,40 +146,18 @@ window.callGeminiApi = async function(userPrompt) {
   throw new Error(lastError || 'Invalid API key or HTTP response error from Google Gemini.');
 };
 
-// A "thinking line" is a bullet where a plain (non-bold) Title-Case label is followed by colon.
-// e.g. "*   Role: Adviser", "*   User's context: ...", "*   Task: ..."
-// Answer lines start with bold labels: "*   *Snowball:* Focus..." — the extra * means skip them.
-const THINKING_KEYWORDS = /^\s*\*+\s*(?!\*)([A-Z][A-Za-z0-9'\s]{0,35}):\s/;
-
-
 window.sanitizeAiOutput = function(rawText) {
   if (!rawText) return '';
 
   // Split into paragraphs on blank lines
   const paragraphs = rawText.trim().split(/\n[ \t]*\n/);
 
-  const isThinkingParagraph = (para) => {
-    const lines = para.split('\n').filter(l => l.trim().length > 0);
-    if (!lines.length) return true;
-    const thinkingLines = lines.filter(l => THINKING_KEYWORDS.test(l));
-    return thinkingLines.length / lines.length >= 0.5;
-  };
-
-  // Check if response starts with a Gemma-like thinking header block
-  const startsWithThinking = paragraphs.length > 0 && isThinkingParagraph(paragraphs[0]);
-
   const cleanedParagraphs = [];
   for (const para of paragraphs) {
-    // If Gemma starts with thinking, we skip thinking paragraphs. 
-    // If it's a standard Gemini response, we don't skip anything!
-    if (startsWithThinking && isThinkingParagraph(para)) {
-      continue;
-    }
-
-    // Remove stray Draft/Check lines
+    // Remove any stray formatting/metadata lines
     const cleaned = para
       .split('\n')
-      .filter(l => !/^\s*\*+\s*\*?(Draft|Bullet\s*\d|Check\s)/i.test(l))
+      .filter(l => !/^\s*\*+\s*\*?(Draft|Bullet\s*\d|Check\s|Constraint\s*\d+:)/i.test(l))
       .join('\n')
       .replace(/^    \*/gm, '*')   // Remove 4-space indent
       .replace(/^\s{4}/gm, '')
@@ -189,10 +165,6 @@ window.sanitizeAiOutput = function(rawText) {
 
     if (cleaned) {
       cleanedParagraphs.push(cleaned);
-      // For Gemma, we only want the first clean answer block (the rest are drafts)
-      if (startsWithThinking) {
-        break;
-      }
     }
   }
 
@@ -200,6 +172,5 @@ window.sanitizeAiOutput = function(rawText) {
     return cleanedParagraphs.join('\n\n');
   }
 
-  // Fallback: strip italic-style metadata markers and return raw
   return rawText.replace(/\*[^*\n]+\*/g, '').replace(/\s{2,}/g, ' ').trim();
 };
