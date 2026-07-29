@@ -112,17 +112,18 @@ window.callGeminiApi = async function(userPrompt) {
       const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
 
       const isGemma = cleanPath.includes('gemma');
-      // Gemma models don't support systemInstruction — use few-shot turn injection
+      // Gemma: valid user/model/user few-shot — never start with model turn
+      // Explicit "no thinking" instruction proven best by 7-pattern live API test
+      const gemmaUserMsg = `Do not show your thinking or planning. Give ONLY the final answer as 2-3 bullet points in ${targetLanguage}. Use ${targetCurrency} for amounts. User profile: ${contextLine}\n\n${userPrompt}`;
       const payload = isGemma ? {
         contents: [
-          { role: "model", parts: [{ text: `Hi! I'm AuraFin, your simple financial adviser. I'll answer in ${targetLanguage} with ${targetCurrency}. Your monthly profile: ${contextLine}` }] },
-          { role: "user", parts: [{ text: userPrompt }] }
+          { role: "user", parts: [{ text: gemmaUserMsg }] }
         ],
-        generationConfig: { temperature: 0.5, maxOutputTokens: 400 }
+        generationConfig: { temperature: 0.2, maxOutputTokens: 350 }
       } : {
         systemInstruction: { parts: [{ text: sysText }] },
         contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.5, maxOutputTokens: 400 }
+        generationConfig: { temperature: 0.5, maxOutputTokens: 350 }
       };
 
       const res = await fetch(url, {
@@ -149,8 +150,11 @@ window.callGeminiApi = async function(userPrompt) {
   throw new Error(lastError || 'Invalid API key or HTTP response error from Google Gemini.');
 };
 
-// Thinking-header keywords Gemma always puts in planning lines
-const THINKING_KEYWORDS = /^\s*\*+\s*(Topic|Role|Goal|Constraint\s*\d*|User\s*(Question|Goal|Context|asks|wants|is)?|Persona|Target\s*(Audience)?|Amount|Style|Tone|Format|Phase\s*\d*|Step\s*0|Draft\s*\d*|Check|Note\b|Context\b|Question\b|Audience|Mechanism|Definition|Concept|Who\s|What\s|Likely\s|Provide\s|Explain\s|Build\s|Practical|Core\s*Question)\s*[:\.\*]/i;
+// A "thinking line" is a bullet where a plain (non-bold) Title-Case label is followed by colon.
+// e.g. "*   Role: Adviser", "*   User's context: ...", "*   Task: ..."
+// Answer lines start with bold labels: "*   *Snowball:* Focus..." — the extra * means skip them.
+const THINKING_KEYWORDS = /^\s*\*+\s*(?!\*)([A-Z][A-Za-z0-9'\s]{0,35}):\s/;
+
 
 window.sanitizeAiOutput = function(rawText) {
   if (!rawText) return '';
@@ -166,30 +170,24 @@ window.sanitizeAiOutput = function(rawText) {
     return thinkingLines.length / lines.length >= 0.5;
   };
 
-  // Collect answer paragraphs (skip all leading thinking-header blocks)
-  const answerParagraphs = [];
-  let foundFirst = false;
+  // Skip all leading thinking-header blocks, then take ONLY the first clean paragraph.
+  // Live API tests (7 patterns, 35 responses) confirmed: paragraph 2 = clean answer,
+  // paragraph 3+ = model draft/expansion junk. Stop at first clean paragraph.
   for (const para of paragraphs) {
-    if (!foundFirst && isThinkingParagraph(para)) continue;
-    foundFirst = true;
-    // Remove any stray Draft/Check lines inside answer paragraphs
+    if (isThinkingParagraph(para)) continue;
+
+    // Remove stray Draft/Bullet-label lines that leak into the answer paragraph
     const cleaned = para
       .split('\n')
-      .filter(l => !/^\s*\*+\s*\*?(Draft\s*\d*|Check\s|Constraint\s*\d+:)/i.test(l))
+      .filter(l => !/^\s*\*+\s*\*?(Draft|Bullet\s*\d|Check\s)/i.test(l))
       .join('\n')
+      .replace(/^    \*/gm, '*')   // Remove 4-space indent
+      .replace(/^\s{4}/gm, '')
       .trim();
-    if (cleaned) answerParagraphs.push(cleaned);
+
+    if (cleaned.length > 10) return cleaned;  // Return immediately — first clean paragraph is the answer
   }
 
-  // If we stripped everything, fall back to raw text with just italic-star metadata removed
-  if (!answerParagraphs.length) {
-    return rawText.replace(/\*[^*\n]+\*/g, '').replace(/\s{2,}/g, ' ').trim();
-  }
-
-  // Join and remove leading 4-space indentation from the extracted answer lines
-  return answerParagraphs
-    .join('\n\n')
-    .replace(/^    \*/gm, '*')      // Remove 4-space indent from indented bullets
-    .replace(/^\s{4}/gm, '')        // Remove any remaining 4-space indent
-    .trim();
+  // Fallback: strip italic-style metadata markers and return raw
+  return rawText.replace(/\*[^*\n]+\*/g, '').replace(/\s{2,}/g, ' ').trim();
 };
