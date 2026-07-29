@@ -149,28 +149,47 @@ window.callGeminiApi = async function(userPrompt) {
   throw new Error(lastError || 'Invalid API key or HTTP response error from Google Gemini.');
 };
 
+// Thinking-header keywords Gemma always puts in planning lines
+const THINKING_KEYWORDS = /^\s*\*+\s*(Topic|Role|Goal|Constraint\s*\d*|User\s*(Question|Goal|Context|asks|wants|is)?|Persona|Target\s*(Audience)?|Amount|Style|Tone|Format|Phase\s*\d*|Step\s*0|Draft\s*\d*|Check|Note\b|Context\b|Question\b|Audience|Mechanism|Definition|Concept|Who\s|What\s|Likely\s|Provide\s|Explain\s|Build\s|Practical|Core\s*Question)\s*[:\.\*]/i;
+
 window.sanitizeAiOutput = function(rawText) {
   if (!rawText) return '';
-  let text = rawText.trim();
 
-  // If model output contains quoted answer (e.g. "To cover six months..."), extract quote
-  const quoteMatches = text.match(/"([^"]{20,})"/);
-  if (quoteMatches && quoteMatches[1] && !quoteMatches[1].includes('User Context:')) {
-    return quoteMatches[1].trim();
+  // Split into paragraphs on blank lines
+  const paragraphs = rawText.trim().split(/\n[ \t]*\n/);
+
+  const isThinkingParagraph = (para) => {
+    const lines = para.split('\n').filter(l => l.trim().length > 0);
+    if (!lines.length) return true;
+    const thinkingLines = lines.filter(l => THINKING_KEYWORDS.test(l));
+    // If 50%+ of lines are thinking lines, whole paragraph is junk
+    return thinkingLines.length / lines.length >= 0.5;
+  };
+
+  // Collect answer paragraphs (skip all leading thinking-header blocks)
+  const answerParagraphs = [];
+  let foundFirst = false;
+  for (const para of paragraphs) {
+    if (!foundFirst && isThinkingParagraph(para)) continue;
+    foundFirst = true;
+    // Remove any stray Draft/Check lines inside answer paragraphs
+    const cleaned = para
+      .split('\n')
+      .filter(l => !/^\s*\*+\s*\*?(Draft\s*\d*|Check\s|Constraint\s*\d+:)/i.test(l))
+      .join('\n')
+      .trim();
+    if (cleaned) answerParagraphs.push(cleaned);
   }
 
-  // Strip scratchpad lines & self-check markers
-  text = text.replace(/^User Context:[^\n]*/gi, '');
-  text = text.replace(/Time to reach goal[^\n]*/gi, '');
-  text = text.replace(/Strategy:[^\n]*/gi, '');
-  text = text.replace(/Constraint \d+:[^\n]*/gi, '');
-  text = text.replace(/User Question:[^\n]*/gi, '');
-  text = text.replace(/User Profile:[^\n]*/gi, '');
-  text = text.replace(/currency used\?[^\n]*/gi, '');
-  text = text.replace(/No internal instructions\?[^\n]*/gi, '');
+  // If we stripped everything, fall back to raw text with just italic-star metadata removed
+  if (!answerParagraphs.length) {
+    return rawText.replace(/\*[^*\n]+\*/g, '').replace(/\s{2,}/g, ' ').trim();
+  }
 
-  // Strip remaining metadata
-  text = text.replace(/\*[^*]+\*/g, '').trim();
-
-  return text.replace(/^["'\s]+|["'\s]+$/g, '');
+  // Join and remove leading 4-space indentation from the extracted answer lines
+  return answerParagraphs
+    .join('\n\n')
+    .replace(/^    \*/gm, '*')      // Remove 4-space indent from indented bullets
+    .replace(/^\s{4}/gm, '')        // Remove any remaining 4-space indent
+    .trim();
 };
