@@ -100,9 +100,15 @@ window.callGeminiApi = async function(userPrompt) {
   const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
   const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User context: ${contextLine} Give 2-3 short bullet points of simple, direct, practical advice. No jargon. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
 
+  // Discard any cached Gemma model paths to prevent locking onto Gemma
+  if (window.state.activeModelPath && window.state.activeModelPath.includes('gemma')) {
+    window.state.activeModelPath = null;
+  }
+
   const candidateModels = window.state.activeModelPath
     ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
     : ['models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest'];
+
 
   let lastError = null;
 
