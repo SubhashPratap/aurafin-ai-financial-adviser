@@ -197,17 +197,16 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
+  const promptText = `You are AuraFin, an expert AI financial adviser. Answer the user's question directly and concisely without repeating instructions or internal reasoning.\n\nUser Question: ${prompt}\n\n(User Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
 
   const payload = {
     contents: [{
       parts: [
-        { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
+        { text: promptText }
       ]
     }]
   };
 
-  // Step 1: Query ListModels dynamically to get compatible model names for this key
   let candidateModels = [
     'models/gemma-4-26b-a4b-it',
     'models/gemma-4-31b-it',
@@ -223,7 +222,6 @@ async function callGeminiApi(prompt) {
         .filter(m => m.name)
         .map(m => m.name);
       
-      // Put discovered models at top of search list
       candidateModels = Array.from(new Set([...dynamicList, ...candidateModels]));
     }
   } catch (e) {
@@ -245,7 +243,16 @@ async function callGeminiApi(prompt) {
 
       const data = await res.json();
       if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-        return data.candidates[0].content.parts[0].text;
+        let rawText = data.candidates[0].content.parts[0].text;
+        
+        // Clean up internal chain-of-thought metadata if returned by model
+        if (rawText.includes('*Draft:*')) {
+          rawText = rawText.split('*Draft:*')[1].trim();
+        } else if (rawText.includes('Draft:')) {
+          rawText = rawText.split('Draft:')[1].trim();
+        }
+        
+        return rawText.replace(/^["'\s]+|["'\s]+$/g, '');
       }
       if (data.error) {
         lastError = data.error.message;
