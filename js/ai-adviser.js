@@ -92,58 +92,35 @@ window.processAiQuery = async function(userQuery) {
 };
 
 window.callGeminiApi = async function(userPrompt) {
-  const cleanKey = window.state.apiKey.trim();
-  const targetLanguage = window.state.language || 'English';
-  const targetCurrency = window.state.currency || '₹';
-
-  // Shared short system context
-  const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
-  const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User context: ${contextLine} Give 2-3 short bullet points of simple, direct, practical advice. No jargon. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
-
-  // Verify cached active model path
-  if (window.state.activeModelPath && window.state.activeModelPath.includes('gemma')) {
-    window.state.activeModelPath = 'models/gemini-flash-latest';
-  }
-
-  const candidateModels = window.state.activeModelPath
-    ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
-    : ['models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest'];
-
-  let lastError = null;
-
-  for (const modelPath of candidateModels) {
-    try {
-      const cleanPath = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
-      const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
-
-      const payload = {
-        systemInstruction: { parts: [{ text: sysText }] },
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 600 }
-      };
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-        window.state.activeModelPath = cleanPath;
-        return window.sanitizeAiOutput(data.candidates[0].content.parts[0].text);
-      }
-
-      if (data.error) {
-        lastError = data.error.message;
-      }
-    } catch (err) {
-      lastError = err.message;
+  const payload = {
+    userPrompt: userPrompt,
+    userApiKey: window.state.apiKey,
+    state: {
+      income: window.state.income,
+      needs: window.state.needs,
+      wants: window.state.wants,
+      savings: window.state.savings,
+      currency: window.state.currency,
+      language: window.state.language
     }
+  };
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  if (data.error) {
+    throw new Error(data.error);
   }
 
-  throw new Error(lastError || 'Invalid API key or HTTP response error from Google Gemini.');
+  if (data.text) {
+    return window.sanitizeAiOutput(data.text);
+  }
+
+  throw new Error("Invalid or empty response from backend adviser server.");
 };
 
 window.sanitizeAiOutput = function(rawText) {
