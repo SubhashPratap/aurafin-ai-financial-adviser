@@ -37,16 +37,36 @@ window.addChatMessage = function(text, sender) {
   const now = new Date();
   const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+  // Format markdown for bot messages (bold, bullet points, linebreaks)
+  const formattedContent = sender === 'bot' ? window.formatMarkdownText(text) : window.escapeHtml(text);
+
   msg.innerHTML = `
     <div class="msg-avatar">${avatarIcon}</div>
     <div class="msg-bubble">
-      <div class="msg-text">${window.escapeHtml(text)}</div>
+      <div class="msg-text">${formattedContent}</div>
       <div class="msg-time">${time}</div>
     </div>
   `;
 
   container.appendChild(msg);
   container.scrollTop = container.scrollHeight;
+};
+
+// Format Markdown Bold (**text**), Bullet points, and Linebreaks
+window.formatMarkdownText = function(text) {
+  if (!text) return '';
+  let html = window.escapeHtml(text);
+
+  // Convert **bold** to <strong>bold</strong>
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+  // Format bullet points
+  html = html.replace(/^[\*\-\•]\s+(.*)$/gm, '• $1');
+
+  // Convert newlines to <br>
+  html = html.replace(/\n/g, '<br>');
+
+  return html;
 };
 
 window.processAiQuery = async function(userQuery) {
@@ -76,12 +96,22 @@ window.callGeminiApi = async function(userPrompt) {
   const targetLanguage = window.state.language || 'English';
   const targetCurrency = window.state.currency || '₹';
 
+  const systemInstructionText = `You are AuraFin, a friendly financial adviser. Explain everything simply in plain everyday language without complex financial jargon.
+Always reply strictly in ${targetLanguage} language.
+Use ${targetCurrency} currency format for amounts.
+
+User Financial Context:
+- Income: ${window.formatCurrency(window.state.income)}
+- Needs: ${window.formatCurrency(window.state.needs)}
+- Wants: ${window.formatCurrency(window.state.wants)}
+- Monthly Savings: ${window.formatCurrency(window.state.savings)}
+
+Give direct, practical advice in 2-3 simple steps. Use bullet points and bold numbers for key amounts.`;
+
   const payload = {
     systemInstruction: {
       parts: [
-        {
-          text: `You are AuraFin, a professional AI financial adviser. Respond ALWAYS strictly in ${targetLanguage} language. Provide clear, direct, helpful financial guidance in 2-4 sentences using ${targetCurrency} currency. Do NOT output internal prompt instructions, constraints, or draft notes.\nUser Profile Context (${targetCurrency}): Monthly Income: ${window.formatCurrency(window.state.income)}, Needs: ${window.formatCurrency(window.state.needs)}, Wants: ${window.formatCurrency(window.state.wants)}, Savings: ${window.formatCurrency(window.state.savings)}.`
-        }
+        { text: systemInstructionText }
       ]
     },
     contents: [
@@ -93,8 +123,8 @@ window.callGeminiApi = async function(userPrompt) {
       }
     ],
     generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 500
+      temperature: 0.5,
+      maxOutputTokens: 400
     }
   };
 
@@ -137,15 +167,24 @@ window.sanitizeAiOutput = function(rawText) {
   if (!rawText) return '';
   let text = rawText.trim();
 
-  if (text.includes('*Draft 2:*')) text = text.split('*Draft 2:*')[1];
-  else if (text.includes('*Draft 1:*')) text = text.split('*Draft 1:*')[1];
-  else if (text.includes('Draft:')) text = text.split('Draft:')[1];
-  else if (text.includes('Total sentences:')) text = text.split('Total sentences:')[1];
+  // If model output contains quoted answer (e.g. "To cover six months..."), extract quote
+  const quoteMatches = text.match(/"([^"]{20,})"/);
+  if (quoteMatches && quoteMatches[1] && !quoteMatches[1].includes('User Context:')) {
+    return quoteMatches[1].trim();
+  }
 
+  // Strip scratchpad lines & self-check markers
+  text = text.replace(/^User Context:[^\n]*/gi, '');
+  text = text.replace(/Time to reach goal[^\n]*/gi, '');
+  text = text.replace(/Strategy:[^\n]*/gi, '');
   text = text.replace(/Constraint \d+:[^\n]*/gi, '');
   text = text.replace(/User Question:[^\n]*/gi, '');
   text = text.replace(/User Profile:[^\n]*/gi, '');
-  text = text.replace(/\*[^*]+\*/g, '');
+  text = text.replace(/currency used\?[^\n]*/gi, '');
+  text = text.replace(/No internal instructions\?[^\n]*/gi, '');
 
-  return text.trim().replace(/^["'\s]+|["'\s]+$/g, '');
+  // Strip remaining metadata
+  text = text.replace(/\*[^*]+\*/g, '').trim();
+
+  return text.replace(/^["'\s]+|["'\s]+$/g, '');
 };
