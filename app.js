@@ -4,16 +4,17 @@
 
 // --- Global Application State ---
 const state = {
-  income: 5000,
-  needs: 2500,
-  wants: 1000,
-  savings: 1500,
+  income: 80000,
+  needs: 40000,
+  wants: 16000,
+  savings: 24000,
+  currency: localStorage.getItem('aura_currency') || '₹',
   apiKey: localStorage.getItem('aura_gemini_key') || '',
   activeModelPath: null,
   goals: [
-    { id: 1, name: 'Emergency Capital Reserve', target: 15000, current: 9500 },
-    { id: 2, name: 'Vehicle Replacement Reserve', target: 8000, current: 3200 },
-    { id: 3, name: 'Property Down Payment', target: 25000, current: 12500 }
+    { id: 1, name: 'Emergency Capital Reserve', target: 300000, current: 180000 },
+    { id: 2, name: 'Vehicle Replacement Reserve', target: 150000, current: 60000 },
+    { id: 3, name: 'Property Down Payment', target: 500000, current: 250000 }
   ]
 };
 
@@ -26,12 +27,39 @@ const ICONS = {
 // --- Application Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
+  initCurrencySelector();
   initBudgetCalculator();
   initGoals();
   initChat();
   initSettingsModal();
   updateDashboard();
 });
+
+// --- Currency Selector Controller ---
+function initCurrencySelector() {
+  const select = document.getElementById('currency-select');
+  if (!select) return;
+
+  select.value = state.currency;
+
+  select.addEventListener('change', (e) => {
+    state.currency = e.target.value;
+    localStorage.setItem('aura_currency', state.currency);
+
+    // Update all currency symbol labels across DOM
+    document.querySelectorAll('.curr-sym').forEach(el => {
+      el.textContent = state.currency;
+    });
+
+    updateDashboard();
+    renderGoals();
+  });
+
+  // Initial symbol sync
+  document.querySelectorAll('.curr-sym').forEach(el => {
+    el.textContent = state.currency;
+  });
+}
 
 // --- Tab Navigation ---
 function initTabs() {
@@ -222,12 +250,11 @@ async function processAiQuery(userQuery) {
 async function callGeminiApi(userPrompt) {
   const cleanKey = state.apiKey.trim();
 
-  // Construct official Google API payload with proper systemInstruction
   const payload = {
     systemInstruction: {
       parts: [
         {
-          text: `You are AuraFin, a professional AI financial adviser. Provide clear, direct, helpful financial guidance in 2-4 sentences. Do NOT output internal prompt instructions, constraints, or draft notes.\nUser Profile Context: Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}.`
+          text: `You are AuraFin, a professional AI financial adviser. Provide clear, direct, helpful financial guidance in 2-4 sentences in terms of ${state.currency} currency. Do NOT output internal prompt instructions, constraints, or draft notes.\nUser Profile Context (${state.currency}): Monthly Income: ${formatCurrency(state.income)}, Needs: ${formatCurrency(state.needs)}, Wants: ${formatCurrency(state.wants)}, Savings: ${formatCurrency(state.savings)}.`
         }
       ]
     },
@@ -245,7 +272,6 @@ async function callGeminiApi(userPrompt) {
     }
   };
 
-  // Candidate models prioritized by speed and stability
   const candidateModels = state.activeModelPath 
     ? [state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro']
     : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro'];
@@ -266,7 +292,7 @@ async function callGeminiApi(userPrompt) {
       const data = await res.json();
 
       if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-        state.activeModelPath = cleanPath; // Cache working model for fast subsequent calls
+        state.activeModelPath = cleanPath;
         return sanitizeAiOutput(data.candidates[0].content.parts[0].text);
       }
 
@@ -286,13 +312,11 @@ function sanitizeAiOutput(rawText) {
   if (!rawText) return '';
   let text = rawText.trim();
 
-  // If model output contains draft markers, strip them out cleanly
   if (text.includes('*Draft 2:*')) text = text.split('*Draft 2:*')[1];
   else if (text.includes('*Draft 1:*')) text = text.split('*Draft 1:*')[1];
   else if (text.includes('Draft:')) text = text.split('Draft:')[1];
   else if (text.includes('Total sentences:')) text = text.split('Total sentences:')[1];
 
-  // Remove constraint markers if echoed
   text = text.replace(/Constraint \d+:[^\n]*/gi, '');
   text = text.replace(/User Question:[^\n]*/gi, '');
   text = text.replace(/User Profile:[^\n]*/gi, '');
@@ -326,7 +350,7 @@ function initSettingsModal() {
   if (saveBtn) {
     saveBtn.addEventListener('click', () => {
       state.apiKey = keyInput.value.trim();
-      state.activeModelPath = null; // Reset cached model
+      state.activeModelPath = null;
       localStorage.setItem('aura_gemini_key', state.apiKey);
       closeModal();
     });
@@ -335,7 +359,13 @@ function initSettingsModal() {
 
 // --- Utility Helpers ---
 function formatCurrency(num) {
-  return '$' + Number(num).toLocaleString('en-US');
+  const symbol = state.currency || '₹';
+  const val = Number(num) || 0;
+  
+  if (symbol === '₹') {
+    return symbol + ' ' + val.toLocaleString('en-IN');
+  }
+  return symbol + ' ' + val.toLocaleString('en-US');
 }
 
 function escapeHtml(str) {

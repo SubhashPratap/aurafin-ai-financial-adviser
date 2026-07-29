@@ -67,11 +67,27 @@
           <i class="fa-solid fa-circle-info"></i>
           <span>Notice: General educational financial planning tool.</span>
         </div>
-        <div class="user-profile">
-          <div class="avatar">
-            <i class="fa-solid fa-user"></i>
+        
+        <div class="top-bar-controls">
+          <!-- Currency Selection Dropdown -->
+          <div class="currency-selector">
+            <i class="fa-solid fa-coins"></i>
+            <select id="currency-select" title="Select Currency">
+              <option value="₹" selected>₹ INR (Rupee)</option>
+              <option value="$">$ USD (Dollar)</option>
+              <option value="€">€ EUR (Euro)</option>
+              <option value="£">£ GBP (Pound)</option>
+              <option value="¥">¥ JPY (Yen)</option>
+              <option value="A$">A$ AUD (AUD)</option>
+            </select>
           </div>
-          <span>My Profile</span>
+
+          <div class="user-profile">
+            <div class="avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <span>My Profile</span>
+          </div>
         </div>
       </header>
 
@@ -87,10 +103,10 @@
             <div class="stat-header">
               <span>Monthly Income</span>
               <div class="stat-icon-badge">
-                <i class="fa-solid fa-dollar-sign"></i>
+                <i class="fa-solid fa-wallet"></i>
               </div>
             </div>
-            <div class="stat-value font-mono" id="disp-income">$5,000</div>
+            <div class="stat-value font-mono" id="disp-income">₹ 80,000</div>
             <div class="stat-sub">Take-home pay</div>
           </div>
 
@@ -101,7 +117,7 @@
                 <i class="fa-solid fa-credit-card"></i>
               </div>
             </div>
-            <div class="stat-value font-mono" id="disp-expenses">$3,100</div>
+            <div class="stat-value font-mono" id="disp-expenses">₹ 50,000</div>
             <div class="stat-sub text-warning" id="disp-expenses-pct">62% of income</div>
           </div>
 
@@ -112,7 +128,7 @@
                 <i class="fa-solid fa-piggy-bank"></i>
               </div>
             </div>
-            <div class="stat-value font-mono text-success" id="disp-savings">$1,900</div>
+            <div class="stat-value font-mono text-success" id="disp-savings">₹ 30,000</div>
             <div class="stat-sub" id="disp-savings-pct">38% savings rate</div>
           </div>
 
@@ -133,20 +149,20 @@
           <h3>Monthly Budget Allocations</h3>
           <div class="form-grid">
             <div class="form-group">
-              <label for="input-income">Monthly Income ($)</label>
-              <input type="number" id="input-income" value="5000" placeholder="5000" class="font-mono" />
+              <label for="input-income">Monthly Income (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="input-income" value="80000" placeholder="80000" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-needs">Needs & Bills ($)</label>
-              <input type="number" id="input-needs" value="2500" placeholder="2500" class="font-mono" />
+              <label for="input-needs">Needs & Bills (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="input-needs" value="40000" placeholder="40000" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-wants">Wants & Fun ($)</label>
-              <input type="number" id="input-wants" value="1000" placeholder="1000" class="font-mono" />
+              <label for="input-wants">Wants & Fun (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="input-wants" value="16000" placeholder="16000" class="font-mono" />
             </div>
             <div class="form-group">
-              <label for="input-savings">Savings & Investments ($)</label>
-              <input type="number" id="input-savings" value="1500" placeholder="1500" class="font-mono" />
+              <label for="input-savings">Savings & Investments (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="input-savings" value="24000" placeholder="24000" class="font-mono" />
             </div>
           </div>
           <button class="btn-primary" id="update-budget-btn">
@@ -177,9 +193,9 @@
           </div>
 
           <div class="suggestion-chips">
-            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund?')">Emergency Fund Strategy</button>
+            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund in Rupees?')">Emergency Fund Strategy</button>
             <button class="chip" onclick="askQuickQuestion('Explain Avalanche vs Snowball debt payoff strategy')">Debt Payoff Methods</button>
-            <button class="chip" onclick="askQuickQuestion('How should I invest $500/month as a beginner?')">Beginner Investing Tips</button>
+            <button class="chip" onclick="askQuickQuestion('How should I invest ₹5,000/month as a beginner in India?')">Beginner Investing Tips</button>
             <button class="chip" onclick="askQuickQuestion('How can I reduce my monthly grocery bill?')">Cut Expenses</button>
           </div>
 
@@ -212,11 +228,11 @@
               <input type="text" id="goal-name" placeholder="e.g. Emergency Fund / House Deposit" required />
             </div>
             <div class="form-group">
-              <label for="goal-target">Target Amount ($)</label>
-              <input type="number" id="goal-target" class="font-mono" placeholder="10000" required />
+              <label for="goal-target">Target Amount (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="goal-target" class="font-mono" placeholder="300000" required />
             </div>
             <div class="form-group">
-              <label for="goal-current">Saved So Far ($)</label>
+              <label for="goal-current">Saved So Far (<span class="curr-sym">₹</span>)</label>
               <input type="number" id="goal-current" class="font-mono" placeholder="0" value="0" required />
             </div>
             <div class="form-group">
@@ -242,21 +258,21 @@
               <div class="rule-pct font-mono">50%</div>
               <h4>Needs & Bills</h4>
               <p>Rent, Utilities, Minimum Debt, Groceries</p>
-              <div class="rule-amount font-mono" id="rule-needs-val">$2,500</div>
+              <div class="rule-amount font-mono" id="rule-needs-val">₹ 40,000</div>
             </div>
 
             <div class="rule-box">
               <div class="rule-pct font-mono">30%</div>
               <h4>Wants & Fun</h4>
               <p>Dining out, Shopping, Movies, Hobbies</p>
-              <div class="rule-amount font-mono" id="rule-wants-val">$1,500</div>
+              <div class="rule-amount font-mono" id="rule-wants-val">₹ 24,000</div>
             </div>
 
             <div class="rule-box">
               <div class="rule-pct font-mono">20%</div>
               <h4>Savings & Future</h4>
               <p>Emergency Fund, Retirement, Investments</p>
-              <div class="rule-amount font-mono" id="rule-savings-val">$1,000</div>
+              <div class="rule-amount font-mono" id="rule-savings-val">₹ 16,000</div>
             </div>
           </div>
         </div>

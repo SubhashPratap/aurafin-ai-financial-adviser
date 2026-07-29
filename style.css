@@ -224,6 +224,42 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   flex-shrink: 0;
 }
 
+.top-bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Currency Selection Dropdown */
+.currency-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.currency-selector i {
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.currency-selector select {
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+}
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -469,7 +505,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 .full-width { width: 100%; }
 .margin-top-auto { margin-top: auto; }
 
-/* Simple Clean AI Advisor Chat Interface (ChatGPT / Claude Style) */
+/* Simple Clean AI Advisor Chat Interface */
 .chat-wrapper {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -506,7 +542,6 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   align-self: flex-start;
 }
 
-/* Simple clean avatars without heavy outer borders */
 .msg-avatar {
   width: 32px;
   height: 32px;
@@ -525,9 +560,8 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   color: var(--text-main);
 }
 
-/* Simple clean speech bubbles */
 .msg-bubble {
-  background-color: #f1f5f9;  /* Soft clean grey for bot */
+  background-color: #f1f5f9;
   border: none;
   padding: 12px 18px;
   border-radius: var(--radius-lg);
@@ -545,7 +579,7 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
 }
 
 .msg.user .msg-bubble {
-  background-color: var(--primary); /* Corporate Blue for user */
+  background-color: var(--primary);
   color: #ffffff !important;
   border-radius: var(--radius-lg);
 }
@@ -565,7 +599,6 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Simple pill suggestion chips */
 .suggestion-chips {
   display: flex;
   gap: 8px;
@@ -591,7 +624,6 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   color: var(--primary);
 }
 
-/* Simple clean input bar */
 .chat-input-bar {
   display: flex;
   gap: 10px;
