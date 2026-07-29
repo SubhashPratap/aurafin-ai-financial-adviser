@@ -197,29 +197,47 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`;
-  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
+  const modelsToTry = [
+    'gemini-1.5-flash-latest',
+    'gemini-2.5-flash',
+    'gemini-1.5-pro-latest',
+    'gemini-pro'
+  ];
 
-  const payload = {
-    contents: [{
-      parts: [
-        { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
-      ]
-    }]
-  };
+  let lastError = null;
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  for (const modelName of modelsToTry) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${cleanKey}`;
+      const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
 
-  const data = await res.json();
-  if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-    return data.candidates[0].content.parts[0].text;
-  } else {
-    throw new Error(data.error ? data.error.message : 'Invalid API Key or HTTP error from Google Gemini');
+      const payload = {
+        contents: [{
+          parts: [
+            { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
+          ]
+        }]
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+        return data.candidates[0].content.parts[0].text;
+      }
+      if (data.error) {
+        lastError = data.error.message;
+      }
+    } catch (err) {
+      lastError = err.message;
+    }
   }
+
+  throw new Error(lastError || 'Invalid API Key or HTTP error from Google Gemini endpoint');
 }
 
 function initSettingsModal() {
