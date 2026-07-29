@@ -98,7 +98,7 @@ window.callGeminiApi = async function(userPrompt) {
 
   // Shared short system context
   const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
-  const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User: ${contextLine} Give 2-3 bullet points of simple, direct, practical advice. No jargon. No explanations about your role.`;
+  const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User context: ${contextLine} Give 2-3 short bullet points of simple, direct, practical advice. No jargon. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
 
   const candidateModels = window.state.activeModelPath
     ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
@@ -114,7 +114,7 @@ window.callGeminiApi = async function(userPrompt) {
       const payload = {
         systemInstruction: { parts: [{ text: sysText }] },
         contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.5, maxOutputTokens: 350 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: 600 }
       };
 
       const res = await fetch(url, {
