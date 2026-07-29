@@ -96,39 +96,11 @@ window.callGeminiApi = async function(userPrompt) {
   const targetLanguage = window.state.language || 'English';
   const targetCurrency = window.state.currency || '₹';
 
-  const systemInstructionText = `You are AuraFin, a friendly financial adviser. Explain everything simply in plain everyday language without complex financial jargon.
-Always reply strictly in ${targetLanguage} language.
-Use ${targetCurrency} currency format for amounts.
+  // Shared short system context
+  const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
+  const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User: ${contextLine} Give 2-3 bullet points of simple, direct, practical advice. No jargon. No explanations about your role.`;
 
-User Financial Context:
-- Income: ${window.formatCurrency(window.state.income)}
-- Needs: ${window.formatCurrency(window.state.needs)}
-- Wants: ${window.formatCurrency(window.state.wants)}
-- Monthly Savings: ${window.formatCurrency(window.state.savings)}
-
-Give direct, practical advice in 2-3 simple steps. Use bullet points and bold numbers for key amounts.`;
-
-  const payload = {
-    systemInstruction: {
-      parts: [
-        { text: systemInstructionText }
-      ]
-    },
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: userPrompt }
-        ]
-      }
-    ],
-    generationConfig: {
-      temperature: 0.5,
-      maxOutputTokens: 400
-    }
-  };
-
-  const candidateModels = window.state.activeModelPath 
+  const candidateModels = window.state.activeModelPath
     ? [window.state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro']
     : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro'];
 
@@ -138,6 +110,20 @@ Give direct, practical advice in 2-3 simple steps. Use bullet points and bold nu
     try {
       const cleanPath = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
       const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
+
+      const isGemma = cleanPath.includes('gemma');
+      // Gemma models don't support systemInstruction — use few-shot turn injection
+      const payload = isGemma ? {
+        contents: [
+          { role: "model", parts: [{ text: `Hi! I'm AuraFin, your simple financial adviser. I'll answer in ${targetLanguage} with ${targetCurrency}. Your monthly profile: ${contextLine}` }] },
+          { role: "user", parts: [{ text: userPrompt }] }
+        ],
+        generationConfig: { temperature: 0.5, maxOutputTokens: 400 }
+      } : {
+        systemInstruction: { parts: [{ text: sysText }] },
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        generationConfig: { temperature: 0.5, maxOutputTokens: 400 }
+      };
 
       const res = await fetch(url, {
         method: 'POST',
