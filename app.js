@@ -129,7 +129,7 @@ function renderGoals() {
   });
 }
 
-// --- AI Advisory Engine ---
+// --- Dynamic AI Advisory Engine ---
 function initChat() {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
@@ -174,59 +174,31 @@ function addChatMessage(text, sender) {
 }
 
 async function processAiQuery(userQuery) {
-  addChatMessage("Processing financial query...", 'bot');
+  addChatMessage("Querying AI model...", 'bot');
 
   const container = document.getElementById('chat-messages');
   const thinkingMsg = container.lastChild;
 
+  if (!state.apiKey || state.apiKey.trim().length === 0) {
+    container.removeChild(thinkingMsg);
+    addChatMessage("Please configure your Gemini API Key in Settings (⚙️) to enable live real-time AI responses.", 'bot');
+    return;
+  }
+
   try {
-    let responseText = "";
-
-    // Accept API Keys starting with AIza or non-empty keys
-    if (state.apiKey && state.apiKey.trim().length > 5) {
-      responseText = await callGeminiApi(userQuery);
-    } else {
-      responseText = await getBuiltinFinancialAdvisorReply(userQuery);
-    }
-
+    const responseText = await callGeminiApi(userQuery);
     container.removeChild(thinkingMsg);
     addChatMessage(responseText, 'bot');
   } catch (error) {
     container.removeChild(thinkingMsg);
-    const fallback = await getBuiltinFinancialAdvisorReply(userQuery);
-    addChatMessage(fallback, 'bot');
+    addChatMessage(`API Error: ${error.message || 'Unable to connect to AI API. Please verify your Gemini API key in Settings.'}`, 'bot');
   }
-}
-
-function getBuiltinFinancialAdvisorReply(query) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const q = query.toLowerCase().trim();
-
-      // Greetings / Conversational phrases
-      if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi') || q.startsWith('hello') || q.startsWith('hey')) {
-        resolve(`Hello! 👋 I'm AuraFin, your AI Financial Adviser. How can I help you today with your budgeting, emergency fund, investments, or debt strategy?`);
-      } else if (q.includes('budget') || q.includes('plan')) {
-        resolve(`Personalized 50/30/20 Budget Plan (Monthly Income: $${state.income.toLocaleString()}):\n\n• Needs & Bills (50%): $${(state.income * 0.5).toLocaleString()} — Rent, utilities, groceries, and minimum debt payments.\n• Wants & Fun (30%): $${(state.income * 0.3).toLocaleString()} — Dining out, entertainment, and personal spending.\n• Savings & Future (20%): $${(state.income * 0.2).toLocaleString()} — Emergency reserve fund and index fund investments.\n\nTip: You can customize your exact monthly numbers anytime in the Dashboard tab!`);
-      } else if (q.includes('emergency fund') || q.includes('reserve')) {
-        resolve(`Emergency Reserve Strategy:\n\n1. Target 3 to 6 months of essential living expenses ($${(state.needs * 3).toLocaleString()} – $${(state.needs * 6).toLocaleString()}).\n2. Place capital in a High-Yield Savings Account (HYSA) with 4.0%+ APY.\n3. Automate recurring transfers immediately following payroll.`);
-      } else if (q.includes('snowball') || q.includes('avalanche') || q.includes('debt')) {
-        resolve(`Debt Reduction Models:\n\n• Debt Avalanche: Prioritize high-APR balances to minimize total interest paid.\n• Debt Snowball: Pay smallest balances first to gain momentum.\n\nRecommendation: Use Avalanche for debts carrying >8% interest.`);
-      } else if (q.includes('invest') || q.includes('stock') || q.includes('crypto')) {
-        resolve(`Investment Framework:\n\n1. Maximize 401(k)/employer match first.\n2. Maximize Roth IRA ($7,000/year limit) into broad market index funds (e.g. VTI / S&P 500).\n3. Maintain disciplined long-term dollar-cost averaging.`);
-      } else if (q.includes('grocery') || q.includes('cut') || q.includes('save money')) {
-        resolve(`Expense Reduction Action Plan:\n\n1. Audit recurring monthly subscriptions.\n2. Implement a 48-hour cool-off period before non-essential purchases over $50.\n3. Track discretionary spending against your $${state.wants.toLocaleString()} budget.`);
-      } else {
-        resolve(`Financial Guidance for "${query}":\n\nBased on your current monthly profile (Income: $${state.income.toLocaleString()}, Savings Rate: ${Math.round(((state.income - state.needs - state.wants) / state.income) * 100)}%):\n\n1. Maintain fixed expenses under 50% ($${(state.income * 0.5).toLocaleString()}).\n2. Allocate surplus toward target savings goals.\n3. Review your budget weekly to maintain cash flow performance.`);
-      }
-    }, 500);
-  });
 }
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`;
-  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question.`;
+  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
 
   const payload = {
     contents: [{
@@ -246,7 +218,7 @@ async function callGeminiApi(prompt) {
   if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
     return data.candidates[0].content.parts[0].text;
   } else {
-    throw new Error(data.error ? data.error.message : 'Invalid API response');
+    throw new Error(data.error ? data.error.message : 'Invalid API Key or HTTP error from Google Gemini');
   }
 }
 
