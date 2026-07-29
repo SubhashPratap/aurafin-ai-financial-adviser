@@ -102,8 +102,9 @@ window.callGeminiApi = async function(userPrompt) {
 
   // Discard any cached Gemma model paths to prevent locking onto Gemma
   if (window.state.activeModelPath && window.state.activeModelPath.includes('gemma')) {
-    window.state.activeModelPath = null;
+    window.state.activeModelPath = 'models/gemini-flash-latest';
   }
+
 
   const candidateModels = window.state.activeModelPath
     ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
