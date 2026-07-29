@@ -21,6 +21,8 @@
   --warning: #d97706;
   --warning-light: #fffbeb;
 
+  --danger: #ef4444;
+
   --text-main: #0f172a;         /* High Contrast Dark Text */
   --text-muted: #475569;
   --text-dim: #64748b;
@@ -677,6 +679,26 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   font-weight: 700;
   font-family: var(--font-heading);
   color: var(--text-main);
+}
+
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-icon-danger {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+
+.btn-icon-danger:hover {
+  color: var(--danger);
 }
 
 .progress-bar-bg {

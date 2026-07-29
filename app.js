@@ -2,20 +2,30 @@
    AuraFin — Financial Intelligence Platform (Core Application State & AI Engine)
    ========================================================================== */
 
-// --- Global Application State ---
-const state = {
+// Load saved data from localStorage or default to Rupee benchmarks
+const savedBudget = JSON.parse(localStorage.getItem('aura_budget_data')) || {
   income: 80000,
   needs: 40000,
   wants: 16000,
-  savings: 24000,
+  savings: 24000
+};
+
+const savedGoals = JSON.parse(localStorage.getItem('aura_goals_data')) || [
+  { id: 1, name: 'Emergency Capital Reserve', target: 300000, current: 180000 },
+  { id: 2, name: 'Vehicle Replacement Reserve', target: 150000, current: 60000 },
+  { id: 3, name: 'Property Down Payment', target: 500000, current: 250000 }
+];
+
+// --- Global Application State ---
+const state = {
+  income: savedBudget.income,
+  needs: savedBudget.needs,
+  wants: savedBudget.wants,
+  savings: savedBudget.savings,
   currency: localStorage.getItem('aura_currency') || '₹',
   apiKey: localStorage.getItem('aura_gemini_key') || '',
   activeModelPath: null,
-  goals: [
-    { id: 1, name: 'Emergency Capital Reserve', target: 300000, current: 180000 },
-    { id: 2, name: 'Vehicle Replacement Reserve', target: 150000, current: 60000 },
-    { id: 3, name: 'Property Down Payment', target: 500000, current: 250000 }
-  ]
+  goals: savedGoals
 };
 
 // --- Font Awesome Icon Templates ---
@@ -111,13 +121,32 @@ function updateDashboard() {
 
 function initBudgetCalculator() {
   const updateBtn = document.getElementById('update-budget-btn');
+  const inputIncome = document.getElementById('input-income');
+  const inputNeeds = document.getElementById('input-needs');
+  const inputWants = document.getElementById('input-wants');
+  const inputSavings = document.getElementById('input-savings');
+
+  // Populate inputs from saved state
+  if (inputIncome) inputIncome.value = state.income;
+  if (inputNeeds) inputNeeds.value = state.needs;
+  if (inputWants) inputWants.value = state.wants;
+  if (inputSavings) inputSavings.value = state.savings;
+
   if (!updateBtn) return;
 
   updateBtn.addEventListener('click', () => {
-    state.income = Number(document.getElementById('input-income').value) || 0;
-    state.needs = Number(document.getElementById('input-needs').value) || 0;
-    state.wants = Number(document.getElementById('input-wants').value) || 0;
-    state.savings = Number(document.getElementById('input-savings').value) || 0;
+    state.income = Number(inputIncome.value) || 0;
+    state.needs = Number(inputNeeds.value) || 0;
+    state.wants = Number(inputWants.value) || 0;
+    state.savings = Number(inputSavings.value) || 0;
+
+    // Persist budget in localStorage
+    localStorage.setItem('aura_budget_data', JSON.stringify({
+      income: state.income,
+      needs: state.needs,
+      wants: state.wants,
+      savings: state.savings
+    }));
 
     updateDashboard();
   });
@@ -143,9 +172,20 @@ function initGoals() {
       current
     });
 
+    saveGoalsToLocalStorage();
     renderGoals();
     goalForm.reset();
   });
+}
+
+function saveGoalsToLocalStorage() {
+  localStorage.setItem('aura_goals_data', JSON.stringify(state.goals));
+}
+
+function deleteGoal(goalId) {
+  state.goals = state.goals.filter(g => g.id !== goalId);
+  saveGoalsToLocalStorage();
+  renderGoals();
 }
 
 function renderGoals() {
@@ -161,7 +201,12 @@ function renderGoals() {
     card.innerHTML = `
       <div class="goal-header">
         <span class="goal-title">${escapeHtml(goal.name)}</span>
-        <span class="text-success font-weight-bold">${pct}%</span>
+        <div class="goal-actions">
+          <span class="text-success font-weight-bold">${pct}%</span>
+          <button class="btn-icon-danger" onclick="deleteGoal(${goal.id})" title="Delete Goal">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
       </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" style="width: ${pct}%"></div>
