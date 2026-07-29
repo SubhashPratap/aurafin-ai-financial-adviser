@@ -130,7 +130,7 @@ function renderGoals() {
   });
 }
 
-// --- Dynamic Ultra-Fast AI Advisory Engine ---
+// --- Dynamic AI Advisory Engine ---
 function initChat() {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
@@ -198,7 +198,7 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const promptText = `Provide direct financial advice in 2 concise sentences max without formatting fluff, drafts, or reasoning steps.\n\nUser Question: ${prompt}\n(Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
+  const promptText = `Provide direct, complete financial advice tailored to the user's question.\n\nUser Question: ${prompt}\n\nUser Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings}`;
 
   const payload = {
     contents: [{
@@ -207,14 +207,14 @@ async function callGeminiApi(prompt) {
       ]
     }],
     generationConfig: {
-      maxOutputTokens: 100,
-      temperature: 0.2
+      maxOutputTokens: 350,
+      temperature: 0.4
     }
   };
 
   const candidateModels = state.activeModelPath 
-    ? [state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-flash-latest', 'models/gemma-4-26b-a4b-it']
-    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-flash-latest', 'models/gemma-4-26b-a4b-it'];
+    ? [state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it']
+    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro'];
 
   let lastError = null;
 
@@ -246,28 +246,23 @@ async function callGeminiApi(prompt) {
 }
 
 function cleanAiResponse(rawText) {
+  if (!rawText) return "";
   let text = rawText.trim();
-  
-  const matches = text.match(/"([^"]{15,})"\s*$/);
-  if (matches && matches[1]) {
-    return matches[1].trim();
-  }
 
-  if (text.includes('Total sentences:')) {
-    const parts = text.split('Total sentences:');
-    let lastPart = parts[parts.length - 1];
-    lastPart = lastPart.replace(/^\s*\d+\.\s*/, '').replace(/^["'\s]+|["'\s]+$/g, '');
-    if (lastPart.length > 10) return lastPart;
-  }
-
+  // If response contains reasoning drafts, split and extract final draft / content
   if (text.includes('*Draft 2:*')) {
     text = text.split('*Draft 2:*')[1];
   } else if (text.includes('*Draft 1:*')) {
     text = text.split('*Draft 1:*')[1];
+  } else if (text.includes('Total sentences:')) {
+    text = text.split('Total sentences:')[1];
   }
 
+  // Remove internal reasoning metadata labels if present
   text = text.replace(/\*[^*]+\*/g, '').trim();
-  return text.replace(/^["'\s]+|["'\s]+$/g, '');
+  text = text.replace(/^["'\s]+|["'\s]+$/g, '');
+
+  return text.length > 5 ? text : rawText.trim();
 }
 
 function initSettingsModal() {
