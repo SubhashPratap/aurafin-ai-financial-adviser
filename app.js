@@ -182,8 +182,8 @@ async function processAiQuery(userQuery) {
   try {
     let responseText = "";
 
-    // Only attempt live Gemini API if a valid Gemini API key starting with AIza is saved
-    if (state.apiKey && state.apiKey.trim().startsWith("AIza")) {
+    // Accept ANY API Key length > 5
+    if (state.apiKey && state.apiKey.trim().length > 5) {
       responseText = await callGeminiApi(userQuery);
     } else {
       responseText = await getBuiltinFinancialAdvisorReply(userQuery);
@@ -192,7 +192,6 @@ async function processAiQuery(userQuery) {
     container.removeChild(thinkingMsg);
     addChatMessage(responseText, 'bot');
   } catch (error) {
-    // Seamless silent fallback to built-in financial adviser without error banners
     container.removeChild(thinkingMsg);
     const fallback = await getBuiltinFinancialAdvisorReply(userQuery);
     addChatMessage(fallback, 'bot');
@@ -205,23 +204,25 @@ function getBuiltinFinancialAdvisorReply(query) {
       const q = query.toLowerCase();
 
       if (q.includes('emergency fund') || q.includes('reserve')) {
-        resolve(`Emergency Reserve Allocation Strategy:\n\n1. Target 3 to 6 months of fixed operational expenses.\n2. Capital should be placed in a High-Yield Savings Account (HYSA) maintaining high liquidity and 4.0%+ yield.\n3. Automate fixed weekly transfers on payroll cycle.`);
+        resolve(`Emergency Reserve Strategy:\n\n1. Target 3 to 6 months of essential living expenses ($${(state.needs * 3).toLocaleString()} – $${(state.needs * 6).toLocaleString()}).\n2. Place capital in a High-Yield Savings Account (HYSA) with 4.0%+ APY.\n3. Automate recurring transfers immediately following payroll.`);
       } else if (q.includes('snowball') || q.includes('avalanche') || q.includes('debt')) {
-        resolve(`Debt Reduction Models:\n\n• Debt Avalanche Model: Prioritize liabilities by highest Annual Percentage Rate (APR). Saves maximum interest capital.\n• Debt Snowball Model: Prioritize liabilities by lowest principal balance. Generates psychological momentum.\n\nStrategy: Use Avalanche for liabilities carrying >8% APR.`);
-      } else if (q.includes('invest') || q.includes('beginner') || q.includes('stock')) {
-        resolve(`Capital Allocation Framework:\n\n1. Eliminate high-interest revolving liabilities.\n2. Capture full employer retirement account match (100% immediate return on capital).\n3. Fund tax-advantaged accounts (Roth IRA / Traditional IRA) allocating to broad-market index funds (e.g. S&P 500 / Total Stock Market).\n4. Maintain disciplined dollar-cost averaging.`);
-      } else if (q.includes('grocery') || q.includes('cut expense') || q.includes('reduce')) {
-        resolve(`Operational Cost Reduction:\n\n1. Perform monthly recurring subscription audit on bank statements.\n2. Implement a 48-hour approval window for non-essential discretionary capital outlays exceeding $50.`);
+        resolve(`Debt Reduction Models:\n\n• Debt Avalanche: Prioritize high-APR balances to minimize total interest paid.\n• Debt Snowball: Pay smallest balances first to gain momentum.\n\nRecommendation: Use Avalanche for debts carrying >8% interest.`);
+      } else if (q.includes('invest') || q.includes('stock') || q.includes('crypto')) {
+        resolve(`Investment Framework:\n\n1. Maximize 401(k)/employer match first.\n2. Maximize Roth IRA ($7,000/year limit) into broad market index funds (e.g. VTI / S&P 500).\n3. Maintain disciplined long-term dollar-cost averaging.`);
+      } else if (q.includes('grocery') || q.includes('cut') || q.includes('save money')) {
+        resolve(`Expense Reduction Action Plan:\n\n1. Audit recurring monthly subscriptions.\n2. Implement a 48-hour cool-off period before non-essential purchases over $50.\n3. Track discretionary spending against your $${state.wants.toLocaleString()} budget.`);
       } else {
-        resolve(`Financial Advisory Analysis for: "${query}"\n\nKey Strategic Benchmarks:\n• Target minimum 20% savings/investment rate of net monthly income.\n• Maintain 3-6 months cash liquidity reserve.\n• Rebalance index portfolios annually.\n• Monitor allocations using the 50/30/20 cashflow framework.`);
+        // Dynamic custom response generation based on actual user query
+        resolve(`Financial Guidance for: "${query}"\n\nBased on your current monthly profile (Income: $${state.income.toLocaleString()}, Savings: $${(state.income - state.needs - state.wants).toLocaleString()}):\n\n1. Strategy: Ensure essential needs stay under 50% ($${(state.income * 0.5).toLocaleString()}).\n2. Capital Allocation: Direct surplus funds toward your active target savings goals.\n3. Action Step: Review allocation limits weekly to maintain financial stability.`);
       }
     }, 600);
   });
 }
 
 async function callGeminiApi(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey.trim()}`;
-  const systemInstruction = `You are AuraFin, a professional institutional financial analyst. Provide clear, concise, structured advice without conversational fluff.`;
+  const cleanKey = state.apiKey.trim();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`;
+  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question.`;
 
   const payload = {
     contents: [{
@@ -238,10 +239,10 @@ async function callGeminiApi(prompt) {
   });
 
   const data = await res.json();
-  if (data.candidates && data.candidates[0].content.parts[0].text) {
+  if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
     return data.candidates[0].content.parts[0].text;
   } else {
-    throw new Error('Invalid API response');
+    throw new Error(data.error ? data.error.message : 'Invalid API response');
   }
 }
 
