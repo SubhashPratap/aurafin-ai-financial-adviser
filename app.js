@@ -198,19 +198,23 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const promptText = `Provide direct financial advice in 2 concise sentences. Do NOT output system rules, draft notes, or internal reasoning.\n\nUser Question: ${prompt}\n(Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
+  const promptText = `Provide direct financial advice in 2 concise sentences max without formatting fluff, drafts, or reasoning steps.\n\nUser Question: ${prompt}\n(Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
 
   const payload = {
     contents: [{
       parts: [
         { text: promptText }
       ]
-    }]
+    }],
+    generationConfig: {
+      maxOutputTokens: 100,
+      temperature: 0.2
+    }
   };
 
   const candidateModels = state.activeModelPath 
-    ? [state.activeModelPath, 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest']
-    : ['models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest', 'models/gemini-pro'];
+    ? [state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-flash-latest', 'models/gemma-4-26b-a4b-it']
+    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-flash-latest', 'models/gemma-4-26b-a4b-it'];
 
   let lastError = null;
 
@@ -244,7 +248,6 @@ async function callGeminiApi(prompt) {
 function cleanAiResponse(rawText) {
   let text = rawText.trim();
   
-  // Extract clean text inside final double quotes if returned by model reasoning
   const matches = text.match(/"([^"]{15,})"\s*$/);
   if (matches && matches[1]) {
     return matches[1].trim();
