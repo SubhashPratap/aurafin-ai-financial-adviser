@@ -157,17 +157,21 @@ window.sanitizeAiOutput = function(rawText) {
     const lines = para.split('\n').filter(l => l.trim().length > 0);
     if (!lines.length) return true;
     const thinkingLines = lines.filter(l => THINKING_KEYWORDS.test(l));
-    // If 50%+ of lines are thinking lines, whole paragraph is junk
     return thinkingLines.length / lines.length >= 0.5;
   };
 
-  // Skip all leading thinking-header blocks, then take ONLY the first clean paragraph.
-  // Live API tests (7 patterns, 35 responses) confirmed: paragraph 2 = clean answer,
-  // paragraph 3+ = model draft/expansion junk. Stop at first clean paragraph.
-  for (const para of paragraphs) {
-    if (isThinkingParagraph(para)) continue;
+  // Check if response starts with a Gemma-like thinking header block
+  const startsWithThinking = paragraphs.length > 0 && isThinkingParagraph(paragraphs[0]);
 
-    // Remove stray Draft/Bullet-label lines that leak into the answer paragraph
+  const cleanedParagraphs = [];
+  for (const para of paragraphs) {
+    // If Gemma starts with thinking, we skip thinking paragraphs. 
+    // If it's a standard Gemini response, we don't skip anything!
+    if (startsWithThinking && isThinkingParagraph(para)) {
+      continue;
+    }
+
+    // Remove stray Draft/Check lines
     const cleaned = para
       .split('\n')
       .filter(l => !/^\s*\*+\s*\*?(Draft|Bullet\s*\d|Check\s)/i.test(l))
@@ -176,7 +180,17 @@ window.sanitizeAiOutput = function(rawText) {
       .replace(/^\s{4}/gm, '')
       .trim();
 
-    if (cleaned.length > 10) return cleaned;  // Return immediately — first clean paragraph is the answer
+    if (cleaned) {
+      cleanedParagraphs.push(cleaned);
+      // For Gemma, we only want the first clean answer block (the rest are drafts)
+      if (startsWithThinking) {
+        break;
+      }
+    }
+  }
+
+  if (cleanedParagraphs.length) {
+    return cleanedParagraphs.join('\n\n');
   }
 
   // Fallback: strip italic-style metadata markers and return raw
