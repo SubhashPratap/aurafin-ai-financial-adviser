@@ -182,7 +182,7 @@ async function processAiQuery(userQuery) {
   try {
     let responseText = "";
 
-    // Accept ANY API Key length > 5
+    // Accept API Keys starting with AIza or non-empty keys
     if (state.apiKey && state.apiKey.trim().length > 5) {
       responseText = await callGeminiApi(userQuery);
     } else {
@@ -201,9 +201,12 @@ async function processAiQuery(userQuery) {
 function getBuiltinFinancialAdvisorReply(query) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const q = query.toLowerCase();
+      const q = query.toLowerCase().trim();
 
-      if (q.includes('emergency fund') || q.includes('reserve')) {
+      // Greetings / Conversational phrases
+      if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi') || q.startsWith('hello') || q.startsWith('hey')) {
+        resolve(`Hello! 👋 I'm AuraFin, your AI Financial Adviser. How can I help you today with your budgeting, emergency fund, investments, or debt strategy?`);
+      } else if (q.includes('emergency fund') || q.includes('reserve')) {
         resolve(`Emergency Reserve Strategy:\n\n1. Target 3 to 6 months of essential living expenses ($${(state.needs * 3).toLocaleString()} – $${(state.needs * 6).toLocaleString()}).\n2. Place capital in a High-Yield Savings Account (HYSA) with 4.0%+ APY.\n3. Automate recurring transfers immediately following payroll.`);
       } else if (q.includes('snowball') || q.includes('avalanche') || q.includes('debt')) {
         resolve(`Debt Reduction Models:\n\n• Debt Avalanche: Prioritize high-APR balances to minimize total interest paid.\n• Debt Snowball: Pay smallest balances first to gain momentum.\n\nRecommendation: Use Avalanche for debts carrying >8% interest.`);
@@ -212,10 +215,9 @@ function getBuiltinFinancialAdvisorReply(query) {
       } else if (q.includes('grocery') || q.includes('cut') || q.includes('save money')) {
         resolve(`Expense Reduction Action Plan:\n\n1. Audit recurring monthly subscriptions.\n2. Implement a 48-hour cool-off period before non-essential purchases over $50.\n3. Track discretionary spending against your $${state.wants.toLocaleString()} budget.`);
       } else {
-        // Dynamic custom response generation based on actual user query
-        resolve(`Financial Guidance for: "${query}"\n\nBased on your current monthly profile (Income: $${state.income.toLocaleString()}, Savings: $${(state.income - state.needs - state.wants).toLocaleString()}):\n\n1. Strategy: Ensure essential needs stay under 50% ($${(state.income * 0.5).toLocaleString()}).\n2. Capital Allocation: Direct surplus funds toward your active target savings goals.\n3. Action Step: Review allocation limits weekly to maintain financial stability.`);
+        resolve(`Financial Guidance for "${query}":\n\nBased on your current monthly profile (Income: $${state.income.toLocaleString()}, Savings Rate: ${Math.round(((state.income - state.needs - state.wants) / state.income) * 100)}%):\n\n1. Maintain fixed expenses under 50% ($${(state.income * 0.5).toLocaleString()}).\n2. Allocate surplus toward target savings goals.\n3. Review your budget weekly to maintain cash flow performance.`);
       }
-    }, 600);
+    }, 500);
   });
 }
 
