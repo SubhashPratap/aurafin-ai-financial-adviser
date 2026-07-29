@@ -197,27 +197,46 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const modelsToTry = [
-    'gemini-1.5-flash-latest',
-    'gemini-2.5-flash',
-    'gemini-1.5-pro-latest',
-    'gemini-pro'
-  ];
+  const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
+
+  const payload = {
+    contents: [{
+      parts: [
+        { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
+      ]
+    }]
+  };
+
+  // Step 1: Dynamically query Google Gemini ListModels API to discover compatible models for this key
+  let targetModelPath = null;
+  try {
+    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
+    const modelsData = await modelsRes.json();
+    if (modelsData.models && Array.isArray(modelsData.models)) {
+      const compatibleModel = modelsData.models.find(m => 
+        m.supportedGenerationMethods && 
+        m.supportedGenerationMethods.includes("generateContent") &&
+        (m.name.includes("gemini") || m.name.includes("flash") || m.name.includes("pro"))
+      );
+      if (compatibleModel && compatibleModel.name) {
+        targetModelPath = compatibleModel.name; // e.g. "models/gemini-1.5-flash-latest" or "models/gemini-pro"
+      }
+    }
+  } catch (e) {
+    console.warn("Dynamic ListModels check failed, falling back to static endpoints:", e);
+  }
+
+  // Step 2: Build candidate list with dynamically discovered model first
+  const modelsToTry = targetModelPath 
+    ? [targetModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-pro']
+    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemini-pro'];
 
   let lastError = null;
 
-  for (const modelName of modelsToTry) {
+  for (const modelPath of modelsToTry) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${cleanKey}`;
-      const systemInstruction = `You are AuraFin, an expert AI financial adviser. Provide clear, direct, structured financial advice tailored to the user's question and monthly profile (Monthly Income: $${state.income}, Needs: $${state.needs}, Wants: $${state.wants}, Savings: $${state.savings}).`;
-
-      const payload = {
-        contents: [{
-          parts: [
-            { text: `${systemInstruction}\n\nUser Question: ${prompt}` }
-          ]
-        }]
-      };
+      const cleanPath = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
 
       const res = await fetch(url, {
         method: 'POST',
