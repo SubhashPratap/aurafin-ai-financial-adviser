@@ -5,6 +5,7 @@ let state = {
   wants: 1000,
   savings: 1500,
   apiKey: localStorage.getItem('aura_gemini_key') || '',
+  activeModelPath: null, // Cache working model for ultra-fast sub-second responses
   goals: [
     { id: 1, name: 'Emergency Capital Reserve', target: 15000, current: 9500 },
     { id: 2, name: 'Vehicle Replacement Reserve', target: 8000, current: 3200 },
@@ -129,7 +130,7 @@ function renderGoals() {
   });
 }
 
-// --- Dynamic AI Advisory Engine ---
+// --- Dynamic Ultra-Fast AI Advisory Engine ---
 function initChat() {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
@@ -174,7 +175,7 @@ function addChatMessage(text, sender) {
 }
 
 async function processAiQuery(userQuery) {
-  addChatMessage("Querying AI model...", 'bot');
+  addChatMessage("Thinking...", 'bot');
 
   const container = document.getElementById('chat-messages');
   const thinkingMsg = container.lastChild;
@@ -197,7 +198,7 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const promptText = `You are AuraFin, an expert AI financial adviser. Answer the user's question directly and concisely without repeating instructions or internal reasoning.\n\nUser Question: ${prompt}\n\n(User Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
+  const promptText = `You are AuraFin, an expert AI financial adviser. Answer concise and directly in 2-3 sentences max without formatting fluff or chain-of-thought drafts.\n\nUser Question: ${prompt}\n(Context: Income $${state.income}, Expenses $${state.needs + state.wants}, Savings $${state.savings})`;
 
   const payload = {
     contents: [{
@@ -207,26 +208,10 @@ async function callGeminiApi(prompt) {
     }]
   };
 
-  let candidateModels = [
-    'models/gemma-4-26b-a4b-it',
-    'models/gemma-4-31b-it',
-    'models/gemini-2.0-flash',
-    'models/gemini-1.5-flash-latest'
-  ];
-
-  try {
-    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
-    const modelsData = await modelsRes.json();
-    if (modelsData.models && Array.isArray(modelsData.models)) {
-      const dynamicList = modelsData.models
-        .filter(m => m.name)
-        .map(m => m.name);
-      
-      candidateModels = Array.from(new Set([...dynamicList, ...candidateModels]));
-    }
-  } catch (e) {
-    console.warn("ListModels fetch warning:", e);
-  }
+  // High-speed prioritized model queue (fastest models first)
+  const candidateModels = state.activeModelPath 
+    ? [state.activeModelPath, 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest']
+    : ['models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest', 'models/gemini-pro'];
 
   let lastError = null;
 
@@ -243,9 +228,11 @@ async function callGeminiApi(prompt) {
 
       const data = await res.json();
       if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+        // Cache this working model path for instant 1-step responses on future prompts!
+        state.activeModelPath = cleanPath;
+        
         let rawText = data.candidates[0].content.parts[0].text;
         
-        // Clean up internal chain-of-thought metadata if returned by model
         if (rawText.includes('*Draft:*')) {
           rawText = rawText.split('*Draft:*')[1].trim();
         } else if (rawText.includes('Draft:')) {
@@ -284,6 +271,7 @@ function initSettingsModal() {
 
   saveBtn.addEventListener('click', () => {
     state.apiKey = keyInput.value.trim();
+    state.activeModelPath = null; // reset cached model
     localStorage.setItem('aura_gemini_key', state.apiKey);
     closeModal();
   });
