@@ -101,8 +101,8 @@ window.callGeminiApi = async function(userPrompt) {
   const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User: ${contextLine} Give 2-3 bullet points of simple, direct, practical advice. No jargon. No explanations about your role.`;
 
   const candidateModels = window.state.activeModelPath
-    ? [window.state.activeModelPath, 'models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro']
-    : ['models/gemini-1.5-flash-latest', 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-pro'];
+    ? [window.state.activeModelPath, 'models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest']
+    : ['models/gemini-flash-latest', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest'];
 
   let lastError = null;
 
@@ -111,16 +111,7 @@ window.callGeminiApi = async function(userPrompt) {
       const cleanPath = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
       const url = `https://generativelanguage.googleapis.com/v1beta/${cleanPath}:generateContent?key=${cleanKey}`;
 
-      const isGemma = cleanPath.includes('gemma');
-      // Gemma: valid user/model/user few-shot — never start with model turn
-      // Explicit "no thinking" instruction proven best by 7-pattern live API test
-      const gemmaUserMsg = `Do not show your thinking or planning. Give ONLY the final answer as 2-3 bullet points in ${targetLanguage}. Use ${targetCurrency} for amounts. User profile: ${contextLine}\n\n${userPrompt}`;
-      const payload = isGemma ? {
-        contents: [
-          { role: "user", parts: [{ text: gemmaUserMsg }] }
-        ],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 350 }
-      } : {
+      const payload = {
         systemInstruction: { parts: [{ text: sysText }] },
         contents: [{ role: "user", parts: [{ text: userPrompt }] }],
         generationConfig: { temperature: 0.5, maxOutputTokens: 350 }
