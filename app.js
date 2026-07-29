@@ -206,6 +206,8 @@ function getBuiltinFinancialAdvisorReply(query) {
       // Greetings / Conversational phrases
       if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi') || q.startsWith('hello') || q.startsWith('hey')) {
         resolve(`Hello! 👋 I'm AuraFin, your AI Financial Adviser. How can I help you today with your budgeting, emergency fund, investments, or debt strategy?`);
+      } else if (q.includes('budget') || q.includes('plan')) {
+        resolve(`Personalized 50/30/20 Budget Plan (Monthly Income: $${state.income.toLocaleString()}):\n\n• Needs & Bills (50%): $${(state.income * 0.5).toLocaleString()} — Rent, utilities, groceries, and minimum debt payments.\n• Wants & Fun (30%): $${(state.income * 0.3).toLocaleString()} — Dining out, entertainment, and personal spending.\n• Savings & Future (20%): $${(state.income * 0.2).toLocaleString()} — Emergency reserve fund and index fund investments.\n\nTip: You can customize your exact monthly numbers anytime in the Dashboard tab!`);
       } else if (q.includes('emergency fund') || q.includes('reserve')) {
         resolve(`Emergency Reserve Strategy:\n\n1. Target 3 to 6 months of essential living expenses ($${(state.needs * 3).toLocaleString()} – $${(state.needs * 6).toLocaleString()}).\n2. Place capital in a High-Yield Savings Account (HYSA) with 4.0%+ APY.\n3. Automate recurring transfers immediately following payroll.`);
       } else if (q.includes('snowball') || q.includes('avalanche') || q.includes('debt')) {
