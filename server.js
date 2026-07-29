@@ -46,14 +46,9 @@ app.post("/api/chat", async (req, res) => {
   }
 
   try {
-    // Leverage the standard and fast gemini-2.5-flash model
-    const model = client.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 1000
-      }
-    });
+    const candidateModels = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-2.0-flash-lite"];
+    let result = null;
+    let lastError = null;
 
     const targetLanguage = (state && state.language) || "English";
     const targetCurrency = (state && state.currency) || "₹";
@@ -72,13 +67,35 @@ User Financial Profile:
 
 Provide direct, practical advice in 2-3 simple steps. Use bullet points and bold numbers for key amounts. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
 
-    const result = await model.generateContent({
-      contents: [
-        { role: "user", parts: [{ text: systemInstruction }] },
-        { role: "model", parts: [{ text: "Understood. I will act as AuraFin financial adviser." }] },
-        { role: "user", parts: [{ text: userPrompt }] }
-      ]
-    });
+    for (const m of candidateModels) {
+      try {
+        const model = client.getGenerativeModel({
+          model: m,
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 1000
+          }
+        });
+
+        result = await model.generateContent({
+          contents: [
+            { role: "user", parts: [{ text: systemInstruction }] },
+            { role: "model", parts: [{ text: "Understood. I will act as AuraFin financial adviser." }] },
+            { role: "user", parts: [{ text: userPrompt }] }
+          ]
+        });
+        
+        if (result && result.response) {
+          break;
+        }
+      } catch (err) {
+        lastError = err.message;
+      }
+    }
+
+    if (!result || !result.response) {
+      throw new Error(lastError || "All candidate models returned empty responses.");
+    }
 
     const responseText = result.response.text();
     if (responseText) {
