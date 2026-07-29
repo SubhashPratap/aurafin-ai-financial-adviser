@@ -198,7 +198,7 @@ async function processAiQuery(userQuery) {
 
 async function callGeminiApi(prompt) {
   const cleanKey = state.apiKey.trim();
-  const promptText = `You are AuraFin, an expert AI financial adviser. Answer concise and directly in 2-3 sentences max without formatting fluff or chain-of-thought drafts.\n\nUser Question: ${prompt}\n(Context: Income $${state.income}, Expenses $${state.needs + state.wants}, Savings $${state.savings})`;
+  const promptText = `Provide direct financial advice in 2 concise sentences. Do NOT output system rules, draft notes, or internal reasoning.\n\nUser Question: ${prompt}\n(Monthly Profile: Income $${state.income}, Needs $${state.needs}, Wants $${state.wants}, Savings $${state.savings})`;
 
   const payload = {
     contents: [{
@@ -208,7 +208,6 @@ async function callGeminiApi(prompt) {
     }]
   };
 
-  // High-speed prioritized model queue (fastest models first)
   const candidateModels = state.activeModelPath 
     ? [state.activeModelPath, 'models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest']
     : ['models/gemini-2.0-flash', 'models/gemma-4-26b-a4b-it', 'models/gemini-1.5-flash-latest', 'models/gemini-pro'];
@@ -228,18 +227,8 @@ async function callGeminiApi(prompt) {
 
       const data = await res.json();
       if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-        // Cache this working model path for instant 1-step responses on future prompts!
         state.activeModelPath = cleanPath;
-        
-        let rawText = data.candidates[0].content.parts[0].text;
-        
-        if (rawText.includes('*Draft:*')) {
-          rawText = rawText.split('*Draft:*')[1].trim();
-        } else if (rawText.includes('Draft:')) {
-          rawText = rawText.split('Draft:')[1].trim();
-        }
-        
-        return rawText.replace(/^["'\s]+|["'\s]+$/g, '');
+        return cleanAiResponse(data.candidates[0].content.parts[0].text);
       }
       if (data.error) {
         lastError = data.error.message;
@@ -250,6 +239,32 @@ async function callGeminiApi(prompt) {
   }
 
   throw new Error(lastError || 'Invalid API Key or HTTP error from Google Gemini endpoint');
+}
+
+function cleanAiResponse(rawText) {
+  let text = rawText.trim();
+  
+  // Extract clean text inside final double quotes if returned by model reasoning
+  const matches = text.match(/"([^"]{15,})"\s*$/);
+  if (matches && matches[1]) {
+    return matches[1].trim();
+  }
+
+  if (text.includes('Total sentences:')) {
+    const parts = text.split('Total sentences:');
+    let lastPart = parts[parts.length - 1];
+    lastPart = lastPart.replace(/^\s*\d+\.\s*/, '').replace(/^["'\s]+|["'\s]+$/g, '');
+    if (lastPart.length > 10) return lastPart;
+  }
+
+  if (text.includes('*Draft 2:*')) {
+    text = text.split('*Draft 2:*')[1];
+  } else if (text.includes('*Draft 1:*')) {
+    text = text.split('*Draft 1:*')[1];
+  }
+
+  text = text.replace(/\*[^*]+\*/g, '').trim();
+  return text.replace(/^["'\s]+|["'\s]+$/g, '');
 }
 
 function initSettingsModal() {
@@ -271,7 +286,7 @@ function initSettingsModal() {
 
   saveBtn.addEventListener('click', () => {
     state.apiKey = keyInput.value.trim();
-    state.activeModelPath = null; // reset cached model
+    state.activeModelPath = null;
     localStorage.setItem('aura_gemini_key', state.apiKey);
     closeModal();
   });
