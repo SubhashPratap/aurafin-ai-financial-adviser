@@ -5,6 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   if (window.initCurrencySelector) window.initCurrencySelector();
+  if (window.initLanguageSelector) window.initLanguageSelector();
   if (window.initBudgetCalculator) window.initBudgetCalculator();
   if (window.initGoals) window.initGoals();
   if (window.initChat) window.initChat();

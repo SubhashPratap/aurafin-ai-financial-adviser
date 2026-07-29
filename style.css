@@ -232,8 +232,8 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   gap: 12px;
 }
 
-/* Currency Selection Dropdown */
-.currency-selector {
+/* Control Dropdowns (Currency & Language) */
+.control-dropdown {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -246,12 +246,12 @@ h1, h2, h3, h4, .brand-text h2, .page-title h1 {
   color: var(--text-main);
 }
 
-.currency-selector i {
+.control-dropdown i {
   color: var(--primary);
   font-size: 0.9rem;
 }
 
-.currency-selector select {
+.control-dropdown select {
   border: none;
   background: transparent;
   font-family: var(--font-body);

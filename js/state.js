@@ -24,6 +24,7 @@ window.state = {
   wants: savedBudget.wants,
   savings: savedBudget.savings,
   currency: localStorage.getItem('aura_currency') || '₹',
+  language: localStorage.getItem('aura_language') || 'English',
   apiKey: localStorage.getItem('aura_gemini_key') || '',
   activeModelPath: null,
   goals: savedGoals

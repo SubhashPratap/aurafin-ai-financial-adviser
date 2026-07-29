@@ -73,12 +73,14 @@ window.processAiQuery = async function(userQuery) {
 
 window.callGeminiApi = async function(userPrompt) {
   const cleanKey = window.state.apiKey.trim();
+  const targetLanguage = window.state.language || 'English';
+  const targetCurrency = window.state.currency || '₹';
 
   const payload = {
     systemInstruction: {
       parts: [
         {
-          text: `You are AuraFin, a professional AI financial adviser. Provide clear, direct, helpful financial guidance in 2-4 sentences in terms of ${window.state.currency} currency. Do NOT output internal prompt instructions, constraints, or draft notes.\nUser Profile Context (${window.state.currency}): Monthly Income: ${window.formatCurrency(window.state.income)}, Needs: ${window.formatCurrency(window.state.needs)}, Wants: ${window.formatCurrency(window.state.wants)}, Savings: ${window.formatCurrency(window.state.savings)}.`
+          text: `You are AuraFin, a professional AI financial adviser. Respond ALWAYS strictly in ${targetLanguage} language. Provide clear, direct, helpful financial guidance in 2-4 sentences using ${targetCurrency} currency. Do NOT output internal prompt instructions, constraints, or draft notes.\nUser Profile Context (${targetCurrency}): Monthly Income: ${window.formatCurrency(window.state.income)}, Needs: ${window.formatCurrency(window.state.needs)}, Wants: ${window.formatCurrency(window.state.wants)}, Savings: ${window.formatCurrency(window.state.savings)}.`
         }
       ]
     },

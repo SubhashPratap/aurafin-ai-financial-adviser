@@ -27,6 +27,18 @@ window.initCurrencySelector = function() {
   });
 };
 
+window.initLanguageSelector = function() {
+  const select = document.getElementById('language-select');
+  if (!select) return;
+
+  select.value = window.state.language;
+
+  select.addEventListener('change', (e) => {
+    window.state.language = e.target.value;
+    localStorage.setItem('aura_language', window.state.language);
+  });
+};
+
 window.updateDashboard = function() {
   const totalExpenses = window.state.needs + window.state.wants;
   const netSavings = window.state.income - totalExpenses;
