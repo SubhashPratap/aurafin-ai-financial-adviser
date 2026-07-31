@@ -532,13 +532,20 @@ h1, h2, h3, h4 {
 }
 
 /* ─── Chat ───────────────────────────────────────────────────────────────── */
+#tab-advisor.tab-page.active {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 70px);
+}
+
 .chat-wrapper {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  height: 620px;
+  flex: 1;
+  min-height: 0;
   box-shadow: var(--shadow-xs);
   overflow: hidden;
 }
@@ -1351,8 +1358,13 @@ h1, h2, h3, h4 {
     grid-template-columns: 1fr !important;
   }
 
+  #tab-advisor.tab-page.active {
+    height: auto !important;
+  }
+
   .chat-wrapper {
-    height: 480px !important;
+    height: calc(100vh - 160px) !important;
+    min-height: 480px !important;
   }
 
   .floating-chat-container {
