@@ -45,9 +45,11 @@ A modern, responsive web application for personal wealth management, budgeting a
 ## How to Run Locally
 
 ### Method 1: Direct File Access
+
 Simply open `index.html` in any modern web browser (Google Chrome, Microsoft Edge, Mozilla Firefox, Brave).
 
 ### Method 2: Local HTTP Server
+
 Run a local Web Server using Python or Node.js:
 
 ```bash

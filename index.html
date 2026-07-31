@@ -43,7 +43,11 @@
               <span>Financial Adviser</span>
             </div>
           </div>
-          <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+          <button
+            id="mobile-menu-toggle"
+            class="mobile-menu-toggle"
+            aria-label="Toggle Navigation Menu"
+          >
             <i class="fa-solid fa-bars"></i>
           </button>
         </div>
@@ -70,7 +74,7 @@
         <div class="api-key-box">
           <div class="api-status">
             <span class="status-dot active"></span>
-            <span class="status-text">AI Adviser Ready</span>
+            <span class="status-text">Configure API Key</span>
           </div>
           <button class="btn-secondary btn-small" id="open-settings-btn">
             <i class="fa-solid fa-gear"></i> Settings
@@ -145,12 +149,8 @@
                   <i class="fa-solid fa-credit-card"></i>
                 </div>
               </div>
-              <div class="stat-value font-mono" id="disp-expenses">
-                --
-              </div>
-              <div class="stat-sub text-warning" id="disp-expenses-pct">
-                --
-              </div>
+              <div class="stat-value font-mono" id="disp-expenses">--</div>
+              <div class="stat-sub text-warning" id="disp-expenses-pct">--</div>
             </div>
 
             <div class="stat-card">
@@ -176,9 +176,7 @@
               <div class="stat-value font-mono text-success" id="disp-score">
                 --
               </div>
-              <div class="stat-sub" id="disp-score-status">
-                --
-              </div>
+              <div class="stat-sub" id="disp-score-status">--</div>
             </div>
           </div>
 
@@ -412,7 +410,8 @@
           <div class="page-title">
             <h1>Budget Split</h1>
             <p>
-              A simple guide to split your monthly income into essential bills (50%), personal fun (30%), and savings (20%).
+              A simple guide to split your monthly income into essential bills
+              (50%), personal fun (30%), and savings (20%).
             </p>
           </div>
 
@@ -423,9 +422,7 @@
                 <h4>Needs & Bills</h4>
               </div>
               <p>Rent, groceries, food & utility bills</p>
-              <div class="rule-amount font-mono" id="rule-needs-val">
-                --
-              </div>
+              <div class="rule-amount font-mono" id="rule-needs-val">--</div>
             </div>
 
             <div class="rule-box">
@@ -434,9 +431,7 @@
                 <h4>Wants & Fun</h4>
               </div>
               <p>Dining out, shopping & entertainment</p>
-              <div class="rule-amount font-mono" id="rule-wants-val">
-                --
-              </div>
+              <div class="rule-amount font-mono" id="rule-wants-val">--</div>
             </div>
 
             <div class="rule-box">
@@ -445,9 +440,7 @@
                 <h4>Savings & Future</h4>
               </div>
               <p>Emergency fund, savings & investments</p>
-              <div class="rule-amount font-mono" id="rule-savings-val">
-                --
-              </div>
+              <div class="rule-amount font-mono" id="rule-savings-val">--</div>
             </div>
           </div>
         </section>
@@ -485,28 +478,58 @@
 
     <!-- Goal Progress Update Modal -->
     <div class="modal-overlay" id="goal-update-modal">
-      <div class="modal" style="max-width: 380px;">
+      <div class="modal" style="max-width: 380px">
         <div class="modal-header">
           <h3>Update Goal Progress</h3>
           <button class="modal-close" id="close-goal-modal-btn">&times;</button>
         </div>
         <div class="modal-body">
-          <p id="goal-update-subtitle" style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;"></p>
+          <p
+            id="goal-update-subtitle"
+            style="
+              font-size: 0.84rem;
+              color: var(--text-muted);
+              margin-bottom: 12px;
+            "
+          ></p>
           <div class="form-group">
-            <label for="goal-update-input">New Saved Amount (<span class="curr-sym">₹</span>)</label>
-            <input type="number" id="goal-update-input" placeholder="0" class="font-mono" style="width: 100%; padding: 8px 12px; font-size: 0.95rem; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none;" />
+            <label for="goal-update-input"
+              >New Saved Amount (<span class="curr-sym">₹</span>)</label
+            >
+            <input
+              type="number"
+              id="goal-update-input"
+              placeholder="0"
+              class="font-mono"
+              style="
+                width: 100%;
+                padding: 8px 12px;
+                font-size: 0.95rem;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-sm);
+                outline: none;
+              "
+            />
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" id="cancel-goal-modal-btn">Cancel</button>
-          <button class="btn-primary" id="save-goal-modal-btn">Save Progress</button>
+          <button class="btn-secondary" id="cancel-goal-modal-btn">
+            Cancel
+          </button>
+          <button class="btn-primary" id="save-goal-modal-btn">
+            Save Progress
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Floating AI Assistant Widget -->
     <div class="floating-chat-container">
-      <button id="floating-chat-toggle" class="floating-chat-fab" title="Quick AI Financial Chat">
+      <button
+        id="floating-chat-toggle"
+        class="floating-chat-fab"
+        title="Quick AI Financial Chat"
+      >
         <i class="fa-solid fa-robot"></i>
         <span>Ask AI</span>
       </button>
@@ -517,7 +540,9 @@
             <i class="fa-solid fa-robot"></i>
             <span>AuraFin Quick AI</span>
           </div>
-          <button id="floating-chat-close" class="floating-chat-close">&times;</button>
+          <button id="floating-chat-close" class="floating-chat-close">
+            &times;
+          </button>
         </div>
         <div id="floating-chat-messages" class="floating-chat-messages">
           <div class="msg bot">
@@ -525,13 +550,21 @@
               <i class="fa-solid fa-robot"></i>
             </div>
             <div class="msg-bubble">
-              <div class="msg-text">Hi! Need quick financial advice on this page? Ask me anything!</div>
+              <div class="msg-text">
+                Hi! Need quick financial advice on this page? Ask me anything!
+              </div>
               <div class="msg-time">Just now</div>
             </div>
           </div>
         </div>
         <form id="floating-chat-form" class="floating-chat-input-bar">
-          <input type="text" id="floating-chat-input" placeholder="Type a quick message..." autocomplete="off" required />
+          <input
+            type="text"
+            id="floating-chat-input"
+            placeholder="Type a quick message..."
+            autocomplete="off"
+            required
+          />
           <button type="submit" class="btn-primary btn-small">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
