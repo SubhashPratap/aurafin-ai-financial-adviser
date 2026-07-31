@@ -114,15 +114,15 @@ h1, h2, h3, h4 {
   overflow: hidden;
 }
 
-/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+/* ─── Sidebar (Purified Desktop Navigation) ─────────────────────────────── */
 .sidebar {
-  width: 240px;
+  width: 230px;
   flex-shrink: 0;
   background-color: var(--bg-surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
+  padding: 20px 14px;
   position: sticky;
   top: 0;
   height: 100vh;
@@ -133,29 +133,30 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   padding: 0 4px;
 }
 
 .brand-icon {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
-  font-size: 0.95rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
 }
 
 .brand-text h2 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-heading);
   line-height: 1.1;
+  letter-spacing: -0.3px;
 }
 
 .brand-text span {
@@ -170,13 +171,13 @@ h1, h2, h3, h4 {
 .nav-menu {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
 }
 
 .nav-item {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -188,36 +189,45 @@ h1, h2, h3, h4 {
   cursor: pointer;
   text-align: left;
   font-family: var(--font-body);
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
 }
 
 .nav-item i {
-  width: 16px;
+  width: 18px;
   text-align: center;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0.75;
+  transition: color 0.15s, opacity 0.15s;
 }
 
 .nav-item:hover {
   background-color: var(--bg-subtle);
-  color: var(--text-body);
+  color: var(--text-heading);
+  transform: translateX(2px);
 }
 
-.nav-item:hover i { opacity: 1; }
+.nav-item:hover i {
+  opacity: 1;
+  color: var(--primary);
+}
 
 .nav-item.active {
   background-color: var(--primary-light);
   color: var(--primary);
   font-weight: 600;
+  border-color: rgba(37, 99, 235, 0.15);
 }
 
-.nav-item.active i { opacity: 1; }
+.nav-item.active i {
+  opacity: 1;
+  color: var(--primary);
+}
 
 /* API key / settings box at bottom */
 .api-key-box {
   border-top: 1px solid var(--border);
-  padding-top: 16px;
+  padding-top: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -238,9 +248,13 @@ h1, h2, h3, h4 {
   border-radius: 50%;
   background-color: var(--border-strong);
   flex-shrink: 0;
+  transition: background-color 0.2s ease;
 }
 
-.status-dot.active { background-color: var(--success); }
+.status-dot.active {
+  background-color: var(--success);
+  box-shadow: 0 0 6px rgba(22, 163, 74, 0.4);
+}
 
 /* ─── Main content ───────────────────────────────────────────────────────── */
 .main-content {
