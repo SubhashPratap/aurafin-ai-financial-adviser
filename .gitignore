@@ -1,0 +1,21 @@
+# Ignore everything by default (Allowlist Pattern)
+*
+
+# Allow directory traversal
+!*/
+
+# Allow Git config and documentation
+!.gitignore
+!README.md
+
+# Allow core application source files
+!index.html
+!style.css
+!server.js
+!app.js
+!package.json
+!package-lock.json
+!project_report.html
+
+# Allow all JavaScript modules inside js/ directory
+!js/**
