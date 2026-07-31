@@ -78,7 +78,7 @@ Provide direct, practical advice in 2-3 simple steps. Use bullet points and bold
           model: m,
           generationConfig: {
             temperature: 0.4,
-            maxOutputTokens: 1000
+            maxOutputTokens: 2000
           }
         });
 

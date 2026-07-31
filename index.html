@@ -1,325 +1,517 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AuraFin | Financial Intelligence Platform</title>
-  
-  <!-- Professional Icon Library: Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  
-  <!-- Matching Typography: Space Grotesk, IBM Plex Sans & IBM Plex Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="app-layout">
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-icon">
-          <i class="fa-solid fa-vault"></i>
-        </div>
-        <div class="brand-text">
-          <h2>AuraFin</h2>
-          <span>Wealth Management</span>
-        </div>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AuraFin | Financial Intelligence Platform</title>
 
-      <nav class="nav-menu">
-        <button class="nav-item active" data-tab="dashboard">
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Dashboard</span>
-        </button>
-        <button class="nav-item" data-tab="advisor">
-          <i class="fa-solid fa-comments"></i>
-          <span>AI Adviser</span>
-        </button>
-        <button class="nav-item" data-tab="goals">
-          <i class="fa-solid fa-bullseye"></i>
-          <span>Savings Goals</span>
-        </button>
-        <button class="nav-item" data-tab="calculator">
-          <i class="fa-solid fa-calculator"></i>
-          <span>50/30/20 Rule</span>
-        </button>
-      </nav>
+    <!-- Professional Icon Library: Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
 
-      <div class="api-key-box">
-        <div class="api-status">
-          <span class="status-dot active"></span>
-          <span class="status-text">AI Adviser Ready</span>
-        </div>
-        <button class="btn-secondary btn-small" id="open-settings-btn">
-          <i class="fa-solid fa-gear"></i> Settings
-        </button>
-      </div>
-    </aside>
+    <!-- Futuristic AI Typography: Outfit, Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- Main Workspace -->
-    <main class="main-content">
-      <!-- Top Bar -->
-      <header class="top-bar">
-        <div class="disclaimer-badge">
-          <i class="fa-solid fa-circle-info"></i>
-          <span>Notice: General educational financial planning tool.</span>
-        </div>
-        
-        <div class="top-bar-controls">
-          <!-- Currency Selection Dropdown -->
-          <div class="control-dropdown">
-            <i class="fa-solid fa-coins"></i>
-            <select id="currency-select" title="Select Currency">
-              <option value="₹" selected>₹ INR (Rupee)</option>
-              <option value="$">$ USD (Dollar)</option>
-              <option value="€">€ EUR (Euro)</option>
-              <option value="£">£ GBP (Pound)</option>
-              <option value="¥">¥ JPY (Yen)</option>
-              <option value="A$">A$ AUD (AUD)</option>
-            </select>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Chart.js for interactive visual budget chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fa-solid fa-vault"></i>
           </div>
-
-          <!-- Language Selection Dropdown -->
-          <div class="control-dropdown">
-            <i class="fa-solid fa-language"></i>
-            <select id="language-select" title="Select Advisory Language">
-              <option value="English" selected>🌐 English</option>
-              <option value="Hindi">🇮🇳 Hindi (हिंदी)</option>
-              <option value="Hinglish">🇮🇳 Hinglish</option>
-              <option value="Spanish">🇪🇸 Spanish (Español)</option>
-              <option value="French">🇫🇷 French (Français)</option>
-              <option value="German">🇩🇪 German (Deutsch)</option>
-              <option value="Japanese">🇯🇵 Japanese (日本語)</option>
-            </select>
-          </div>
-
-          <div class="user-profile">
-            <div class="avatar">
-              <i class="fa-solid fa-user"></i>
-            </div>
-            <span>My Profile</span>
-          </div>
-        </div>
-      </header>
-
-      <!-- TAB 1: DASHBOARD -->
-      <section id="tab-dashboard" class="tab-page active">
-        <div class="page-title">
-          <h1>Financial Overview</h1>
-          <p>Track your monthly cash flow and financial health score.</p>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Monthly Income</span>
-              <div class="stat-icon-badge">
-                <i class="fa-solid fa-wallet"></i>
-              </div>
-            </div>
-            <div class="stat-value font-mono" id="disp-income">₹ 80,000</div>
-            <div class="stat-sub">Take-home pay</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Total Expenses</span>
-              <div class="stat-icon-badge">
-                <i class="fa-solid fa-credit-card"></i>
-              </div>
-            </div>
-            <div class="stat-value font-mono" id="disp-expenses">₹ 56,000</div>
-            <div class="stat-sub text-warning" id="disp-expenses-pct">70% of income</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Monthly Savings</span>
-              <div class="stat-icon-badge success">
-                <i class="fa-solid fa-piggy-bank"></i>
-              </div>
-            </div>
-            <div class="stat-value font-mono text-success" id="disp-savings">₹ 24,000</div>
-            <div class="stat-sub" id="disp-savings-pct">30% savings rate</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Financial Health Score</span>
-              <div class="stat-icon-badge success">
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
-            </div>
-            <div class="stat-value font-mono text-success" id="disp-score">85/100</div>
-            <div class="stat-sub" id="disp-score-status">Status: Excellent</div>
+          <div class="brand-text">
+            <h2>AuraFin</h2>
+            <span>Wealth Management</span>
           </div>
         </div>
 
-        <!-- Monthly Budget Inputs -->
-        <div class="content-card margin-top">
-          <h3>Monthly Budget Allocations</h3>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="input-income">Monthly Income (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="input-income" value="80000" placeholder="80000" class="font-mono" />
-            </div>
-            <div class="form-group">
-              <label for="input-needs">Needs & Bills (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="input-needs" value="40000" placeholder="40000" class="font-mono" />
-            </div>
-            <div class="form-group">
-              <label for="input-wants">Wants & Fun (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="input-wants" value="16000" placeholder="16000" class="font-mono" />
-            </div>
-            <div class="form-group">
-              <label for="input-savings">Savings & Investments (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="input-savings" value="24000" placeholder="24000" class="font-mono" />
-            </div>
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="dashboard">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-tab="advisor">
+            <i class="fa-solid fa-comments"></i>
+            <span>AI Adviser</span>
+          </button>
+          <button class="nav-item" data-tab="goals">
+            <i class="fa-solid fa-bullseye"></i>
+            <span>Savings Goals</span>
+          </button>
+          <button class="nav-item" data-tab="calculator">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Balanced Allocation</span>
+          </button>
+        </nav>
+
+        <div class="api-key-box">
+          <div class="api-status">
+            <span class="status-dot active"></span>
+            <span class="status-text">AI Adviser Ready</span>
           </div>
-          <button class="btn-primary" id="update-budget-btn">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Update Budget</span>
+          <button class="btn-secondary btn-small" id="open-settings-btn">
+            <i class="fa-solid fa-gear"></i> Settings
           </button>
         </div>
-      </section>
+      </aside>
 
-      <!-- TAB 2: AI ADVISOR CHAT -->
-      <section id="tab-advisor" class="tab-page">
-        <div class="page-title">
-          <h1>AI Financial Adviser</h1>
-          <p>Ask any question about budgeting, savings, investments, or debt payoff.</p>
-        </div>
+      <!-- Main Workspace -->
+      <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+          <div class="top-bar-controls">
+            <!-- Currency Selection Dropdown -->
+            <div class="control-dropdown">
+              <i class="fa-solid fa-coins"></i>
+              <select id="currency-select" title="Select Currency">
+                <option value="₹" selected>₹ INR (Rupee)</option>
+                <option value="$">$ USD (Dollar)</option>
+                <option value="€">€ EUR (Euro)</option>
+                <option value="£">£ GBP (Pound)</option>
+                <option value="¥">¥ JPY (Yen)</option>
+                <option value="A$">A$ AUD (AUD)</option>
+              </select>
+            </div>
 
-        <div class="chat-wrapper">
-          <div class="chat-messages" id="chat-messages">
-            <div class="msg bot">
-              <div class="msg-avatar">
-                <i class="fa-solid fa-robot"></i>
+            <!-- Language Selection Dropdown -->
+            <div class="control-dropdown">
+              <i class="fa-solid fa-language"></i>
+              <select id="language-select" title="Select Advisory Language">
+                <option value="English" selected>🌐 English</option>
+                <option value="Hindi">🇮🇳 Hindi (हिंदी)</option>
+                <option value="Hinglish">🇮🇳 Hinglish</option>
+                <option value="Spanish">🇪🇸 Spanish (Español)</option>
+                <option value="French">🇫🇷 French (Français)</option>
+                <option value="German">🇩🇪 German (Deutsch)</option>
+                <option value="Japanese">🇯🇵 Japanese (日本語)</option>
+              </select>
+            </div>
+
+            <div class="user-profile">
+              <div class="avatar">
+                <i class="fa-solid fa-user"></i>
               </div>
-              <div class="msg-bubble">
-                <div class="msg-text">Welcome to AuraFin Advisory. How can I assist you with your financial planning today?</div>
-                <div class="msg-time">Just now</div>
+              <span>My Profile</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="tab-page active">
+          <div class="page-title">
+            <h1>Financial Overview</h1>
+            <p>Track your monthly cash flow and financial health score.</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span>Monthly Income</span>
+                <div class="stat-icon-badge">
+                  <i class="fa-solid fa-wallet"></i>
+                </div>
+              </div>
+              <div class="stat-value font-mono" id="disp-income">₹ 80,000</div>
+              <div class="stat-sub">Take-home pay</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span>Total Expenses</span>
+                <div class="stat-icon-badge">
+                  <i class="fa-solid fa-credit-card"></i>
+                </div>
+              </div>
+              <div class="stat-value font-mono" id="disp-expenses">
+                ₹ 56,000
+              </div>
+              <div class="stat-sub text-warning" id="disp-expenses-pct">
+                70% of income
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span>Monthly Savings</span>
+                <div class="stat-icon-badge success">
+                  <i class="fa-solid fa-piggy-bank"></i>
+                </div>
+              </div>
+              <div class="stat-value font-mono text-success" id="disp-savings">
+                ₹ 24,000
+              </div>
+              <div class="stat-sub" id="disp-savings-pct">30% savings rate</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span>Financial Health Score</span>
+                <div class="stat-icon-badge success">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+              </div>
+              <div class="stat-value font-mono text-success" id="disp-score">
+                85/100
+              </div>
+              <div class="stat-sub" id="disp-score-status">
+                Status: Excellent
               </div>
             </div>
           </div>
 
-          <div class="suggestion-chips">
-            <button class="chip" onclick="askQuickQuestion('How do I build a 6-month emergency fund in Rupees?')">Emergency Fund Strategy</button>
-            <button class="chip" onclick="askQuickQuestion('Explain Avalanche vs Snowball debt payoff strategy')">Debt Payoff Methods</button>
-            <button class="chip" onclick="askQuickQuestion('How should I invest ₹5,000/month as a beginner in India?')">Beginner Investing Tips</button>
-            <button class="chip" onclick="askQuickQuestion('How can I reduce my monthly grocery bill?')">Cut Expenses</button>
+          <!-- Dashboard Bottom Two-Column Layout -->
+          <div class="dashboard-bottom-grid margin-top">
+            <!-- Monthly Budget Inputs Card -->
+            <div class="content-card">
+              <h3>Monthly Budget Allocations</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="input-income"
+                    >Monthly Income (<span class="curr-sym">₹</span>)</label
+                  >
+                  <input
+                    type="number"
+                    id="input-income"
+                    value="80000"
+                    placeholder="80000"
+                    class="font-mono"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="input-needs"
+                    >Needs & Bills (<span class="curr-sym">₹</span>)</label
+                  >
+                  <input
+                    type="number"
+                    id="input-needs"
+                    value="40000"
+                    placeholder="40000"
+                    class="font-mono"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="input-wants"
+                    >Wants & Fun (<span class="curr-sym">₹</span>)</label
+                  >
+                  <input
+                    type="number"
+                    id="input-wants"
+                    value="16000"
+                    placeholder="16000"
+                    class="font-mono"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="input-savings"
+                    >Savings & Investments (<span class="curr-sym">₹</span
+                    >)</label
+                  >
+                  <input
+                    type="number"
+                    id="input-savings"
+                    value="24000"
+                    placeholder="24000"
+                    class="font-mono"
+                  />
+                </div>
+              </div>
+              <div class="card-footer-action">
+                <button class="btn-primary" id="update-budget-btn">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                  <span>Update Budget</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive Chart Card -->
+            <div class="content-card chart-container-card">
+              <h3>Capital Allocation</h3>
+              <div class="chart-wrapper-canvas">
+                <canvas id="budget-chart"></canvas>
+              </div>
+              <div class="allocation-table">
+                <div class="allocation-table-header">
+                  <span>Category</span>
+                  <span>Allocation %</span>
+                </div>
+                <div class="allocation-table-body" id="allocation-legend-list">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: AI ADVISOR CHAT -->
+        <section id="tab-advisor" class="tab-page">
+          <div class="page-title">
+            <h1>AI Financial Adviser</h1>
+            <p>
+              Ask any question about budgeting, savings, investments, or debt
+              payoff.
+            </p>
           </div>
 
-          <form id="chat-form" class="chat-input-bar">
-            <input type="text" id="chat-input" placeholder="Ask a financial question..." autocomplete="off" required />
-            <button type="submit" class="btn-primary">
-              <i class="fa-solid fa-paper-plane"></i>
-              <span>Send</span>
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <!-- TAB 3: SAVINGS GOALS -->
-      <section id="tab-goals" class="tab-page">
-        <div class="page-title">
-          <h1>Savings Goals</h1>
-          <p>Set and track target savings goals for your future milestones.</p>
-        </div>
-
-        <div class="goals-grid" id="goals-container">
-          <!-- Rendered via JS -->
-        </div>
-
-        <div class="content-card margin-top">
-          <h3>Add New Savings Goal</h3>
-          <form id="goal-form" class="form-grid">
-            <div class="form-group">
-              <label for="goal-name">Goal Name</label>
-              <input type="text" id="goal-name" placeholder="e.g. Emergency Fund / House Deposit" required />
+          <div class="chat-wrapper">
+            <div class="chat-messages" id="chat-messages">
+              <div class="msg bot">
+                <div class="msg-avatar">
+                  <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="msg-bubble">
+                  <div class="msg-text">
+                    Welcome to AuraFin Advisory. How can I assist you with your
+                    financial planning today?
+                  </div>
+                  <div class="msg-time">Just now</div>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="goal-target">Target Amount (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="goal-target" class="font-mono" placeholder="300000" required />
-            </div>
-            <div class="form-group">
-              <label for="goal-current">Saved So Far (<span class="curr-sym">₹</span>)</label>
-              <input type="number" id="goal-current" class="font-mono" placeholder="0" value="0" required />
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn-primary full-width margin-top-auto">
-                <i class="fa-solid fa-plus"></i>
-                <span>Add Goal</span>
+
+            <div class="suggestion-chips">
+              <button
+                class="chip"
+                onclick="
+                  askQuickQuestion(
+                    'How do I build a 6-month emergency fund in Rupees?',
+                  )
+                "
+              >
+                Emergency Fund Strategy
+              </button>
+              <button
+                class="chip"
+                onclick="
+                  askQuickQuestion(
+                    'Explain Avalanche vs Snowball debt payoff strategy',
+                  )
+                "
+              >
+                Debt Payoff Methods
+              </button>
+              <button
+                class="chip"
+                onclick="
+                  askQuickQuestion(
+                    'How should I invest ₹5,000/month as a beginner in India?',
+                  )
+                "
+              >
+                Beginner Investing Tips
+              </button>
+              <button
+                class="chip"
+                onclick="
+                  askQuickQuestion('How can I reduce my monthly grocery bill?')
+                "
+              >
+                Cut Expenses
               </button>
             </div>
-          </form>
-        </div>
-      </section>
 
-      <!-- TAB 4: 50/30/20 PLANNER -->
-      <section id="tab-calculator" class="tab-page">
-        <div class="page-title">
-          <h1>50/30/20 Budget Rule</h1>
-          <p>A simple formula to manage your money effectively every month.</p>
-        </div>
+            <form id="chat-form" class="chat-input-bar">
+              <input
+                type="text"
+                id="chat-input"
+                placeholder="Ask a financial question..."
+                autocomplete="off"
+                required
+              />
+              <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Send</span>
+              </button>
+            </form>
+          </div>
+        </section>
 
-        <div class="content-card">
-          <div class="rule-explanation">
-            <div class="rule-box">
-              <div class="rule-pct font-mono">50%</div>
-              <h4>Needs & Bills</h4>
-              <p>Rent, Utilities, Minimum Debt, Groceries</p>
-              <div class="rule-amount font-mono" id="rule-needs-val">₹ 40,000</div>
+        <!-- TAB 3: SAVINGS GOALS -->
+        <section id="tab-goals" class="tab-page">
+          <div class="page-title">
+            <h1>Savings Goals</h1>
+            <p>
+              Set and track target savings goals for your future milestones.
+            </p>
+          </div>
+
+          <div class="goals-grid" id="goals-container">
+            <!-- Rendered via JS -->
+          </div>
+
+          <div class="content-card margin-top">
+            <h3>Add New Savings Goal</h3>
+            <form id="goal-form" class="form-grid">
+              <div class="form-group">
+                <label for="goal-name">Goal Name</label>
+                <input
+                  type="text"
+                  id="goal-name"
+                  placeholder="e.g. Emergency Fund / House Deposit"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="goal-target"
+                  >Target Amount (<span class="curr-sym">₹</span>)</label
+                >
+                <input
+                  type="number"
+                  id="goal-target"
+                  class="font-mono"
+                  placeholder="300000"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="goal-current"
+                  >Saved So Far (<span class="curr-sym">₹</span>)</label
+                >
+                <input
+                  type="number"
+                  id="goal-current"
+                  class="font-mono"
+                  placeholder="0"
+                  value="0"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <button
+                  type="submit"
+                  class="btn-primary full-width margin-top-auto"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  <span>Add Goal</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 4: BALANCED CAPITAL ALLOCATION -->
+        <section id="tab-calculator" class="tab-page">
+          <div class="page-title">
+            <h1>Balanced Capital Allocation</h1>
+            <p>
+              A benchmark strategy to allocate monthly income into Essential Needs (50%), Discretionary Spending (30%), and Wealth Accumulation (20%).
+            </p>
+          </div>
+
+          <div class="content-card">
+            <div class="rule-explanation">
+              <div class="rule-box">
+                <div class="rule-pct font-mono">50%</div>
+                <h4>Needs & Bills</h4>
+                <p>Rent, Utilities, Minimum Debt, Groceries</p>
+                <div class="rule-amount font-mono" id="rule-needs-val">
+                  ₹ 40,000
+                </div>
+              </div>
+
+              <div class="rule-box">
+                <div class="rule-pct font-mono">30%</div>
+                <h4>Wants & Fun</h4>
+                <p>Dining out, Shopping, Movies, Hobbies</p>
+                <div class="rule-amount font-mono" id="rule-wants-val">
+                  ₹ 24,000
+                </div>
+              </div>
+
+              <div class="rule-box">
+                <div class="rule-pct font-mono">20%</div>
+                <h4>Savings & Future</h4>
+                <p>Emergency Fund, Retirement, Investments</p>
+                <div class="rule-amount font-mono" id="rule-savings-val">
+                  ₹ 16,000
+                </div>
+              </div>
             </div>
+          </div>
+        </section>
+      </main>
+    </div>
 
-            <div class="rule-box">
-              <div class="rule-pct font-mono">30%</div>
-              <h4>Wants & Fun</h4>
-              <p>Dining out, Shopping, Movies, Hobbies</p>
-              <div class="rule-amount font-mono" id="rule-wants-val">₹ 24,000</div>
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Gemini API Settings</h3>
+          <button class="modal-close" id="close-settings-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Optionally add a custom Gemini API Key for live AI chat responses.
+            If left empty, the built-in AI adviser provides instant answers.
+          </p>
+          <div class="form-group">
+            <label for="gemini-api-key">Gemini API Key</label>
+            <input
+              type="password"
+              id="gemini-api-key"
+              placeholder="AIzaSy..."
+              class="font-mono"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" id="cancel-settings-btn">Cancel</button>
+          <button class="btn-primary" id="save-settings-btn">Save Key</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating AI Assistant Widget -->
+    <div class="floating-chat-container">
+      <button id="floating-chat-toggle" class="floating-chat-fab" title="Quick AI Financial Chat">
+        <i class="fa-solid fa-robot"></i>
+        <span>Ask AI</span>
+      </button>
+
+      <div id="floating-chat-drawer" class="floating-chat-drawer">
+        <div class="floating-chat-header">
+          <div class="floating-chat-title">
+            <i class="fa-solid fa-robot"></i>
+            <span>AuraFin Quick AI</span>
+          </div>
+          <button id="floating-chat-close" class="floating-chat-close">&times;</button>
+        </div>
+        <div id="floating-chat-messages" class="floating-chat-messages">
+          <div class="msg bot">
+            <div class="msg-avatar">
+              <i class="fa-solid fa-robot"></i>
             </div>
-
-            <div class="rule-box">
-              <div class="rule-pct font-mono">20%</div>
-              <h4>Savings & Future</h4>
-              <p>Emergency Fund, Retirement, Investments</p>
-              <div class="rule-amount font-mono" id="rule-savings-val">₹ 16,000</div>
+            <div class="msg-bubble">
+              <div class="msg-text">Hi! Need quick financial advice on this page? Ask me anything!</div>
+              <div class="msg-time">Just now</div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Settings Modal -->
-  <div class="modal-overlay" id="settings-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Gemini API Settings</h3>
-        <button class="modal-close" id="close-settings-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p>Optionally add a custom Gemini API Key for live AI chat responses. If left empty, the built-in AI adviser provides instant answers.</p>
-        <div class="form-group">
-          <label for="gemini-api-key">Gemini API Key</label>
-          <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="font-mono" />
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" id="cancel-settings-btn">Cancel</button>
-        <button class="btn-primary" id="save-settings-btn">Save Key</button>
+        <form id="floating-chat-form" class="floating-chat-input-bar">
+          <input type="text" id="floating-chat-input" placeholder="Type a quick message..." autocomplete="off" required />
+          <button type="submit" class="btn-primary btn-small">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- Modular Application Scripts -->
-  <script src="js/state.js"></script>
-  <script src="js/dashboard.js"></script>
-  <script src="js/goals.js"></script>
-  <script src="js/ai-adviser.js"></script>
-  <script src="app.js"></script>
-</body>
+    <!-- Modular Application Scripts -->
+    <script src="js/state.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/goals.js"></script>
+    <script src="js/ai-adviser.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>

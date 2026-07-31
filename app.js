@@ -30,6 +30,10 @@ function initTabs() {
       if (targetPage) {
         targetPage.classList.add('active');
       }
+
+      if (window.updateFloatingFabVisibility) {
+        window.updateFloatingFabVisibility(tabTarget);
+      }
     });
   });
 }

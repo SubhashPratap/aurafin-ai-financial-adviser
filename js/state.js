@@ -17,6 +17,11 @@ const savedGoals = JSON.parse(localStorage.getItem('aura_goals_data')) || [
   { id: 3, name: 'Property Down Payment', target: 500000, current: 250000 }
 ];
 
+// Load saved chat history from localStorage or default welcome message
+const savedChatHistory = JSON.parse(localStorage.getItem('aura_chat_history')) || [
+  { text: "Welcome to AuraFin Advisory. How can I assist you with your financial planning today?", sender: "bot", time: "Just now" }
+];
+
 // Global Application State Object
 window.state = {
   income: savedBudget.income,
@@ -27,7 +32,8 @@ window.state = {
   language: localStorage.getItem('aura_language') || 'English',
   apiKey: localStorage.getItem('aura_gemini_key') || '',
   activeModelPath: null,
-  goals: savedGoals
+  goals: savedGoals,
+  chatHistory: savedChatHistory
 };
 
 // Global Font Awesome Icon Templates

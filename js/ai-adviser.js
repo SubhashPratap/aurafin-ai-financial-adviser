@@ -1,25 +1,85 @@
 /* ==========================================================================
    AuraFin — AI Financial Adviser Module (js/ai-adviser.js)
-   ========================================================================== */
-
-window.initChat = function() {
+   ========================================================================== */window.initChat = function() {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
-  if (!form || !input) return;
+
+  // Floating chat elements
+  const floatToggle = document.getElementById('floating-chat-toggle');
+  const floatDrawer = document.getElementById('floating-chat-drawer');
+  const floatClose = document.getElementById('floating-chat-close');
+  const floatForm = document.getElementById('floating-chat-form');
+  const floatInput = document.getElementById('floating-chat-input');
 
   // Initialize status dot based on existing key
   window.updateApiStatusIndicator();
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
+  // Render initial persistent chat history
+  window.renderChatHistory();
 
-    window.addChatMessage(text, 'user');
-    input.value = '';
+  if (form && input) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
 
-    window.processAiQuery(text);
+      window.addChatMessage(text, 'user');
+      input.value = '';
+      window.processAiQuery(text);
+    });
+  }
+
+  // Floating Chat Event Handlers
+  if (floatToggle && floatDrawer) {
+    floatToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      floatDrawer.classList.toggle('active');
+      if (floatDrawer.classList.contains('active') && floatInput) {
+        floatInput.focus();
+      }
+    });
+  }
+
+  if (floatClose && floatDrawer) {
+    floatClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      floatDrawer.classList.remove('active');
+    });
+  }
+
+  // Minimize floating chat when tapping anywhere outside the widget
+  document.addEventListener('click', (e) => {
+    const floatContainer = document.querySelector('.floating-chat-container');
+    if (floatDrawer && floatDrawer.classList.contains('active')) {
+      if (floatContainer && !floatContainer.contains(e.target)) {
+        floatDrawer.classList.remove('active');
+      }
+    }
   });
+
+  if (floatForm && floatInput) {
+    floatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = floatInput.value.trim();
+      if (!text) return;
+
+      window.addChatMessage(text, 'user');
+      floatInput.value = '';
+      window.processAiQuery(text);
+    });
+  }
+};
+
+window.updateFloatingFabVisibility = function(activeTab) {
+  const fabContainer = document.querySelector('.floating-chat-container');
+  if (!fabContainer) return;
+  if (activeTab === 'advisor') {
+    fabContainer.style.display = 'none';
+    const floatDrawer = document.getElementById('floating-chat-drawer');
+    if (floatDrawer) floatDrawer.classList.remove('active');
+  } else {
+    fabContainer.style.display = 'block';
+  }
 };
 
 window.updateApiStatusIndicator = function() {
@@ -42,30 +102,67 @@ window.askQuickQuestion = function(questionText) {
   document.getElementById('chat-form').dispatchEvent(new Event('submit'));
 };
 
-window.addChatMessage = function(text, sender) {
-  const container = document.getElementById('chat-messages');
-  if (!container) return;
+window.renderChatHistory = function() {
+  const containers = [
+    document.getElementById('chat-messages'),
+    document.getElementById('floating-chat-messages')
+  ].filter(Boolean);
 
-  const msg = document.createElement('div');
-  msg.className = `msg ${sender}`;
+  if (containers.length === 0) return;
 
-  const avatarIcon = sender === 'user' ? window.ICONS.user : window.ICONS.bot;
+  containers.forEach(container => {
+    container.innerHTML = '';
+    (window.state.chatHistory || []).forEach(msgData => {
+      const avatarIcon = msgData.sender === 'user' ? window.ICONS.user : window.ICONS.bot;
+      const formattedContent = msgData.sender === 'bot' ? window.formatMarkdownText(msgData.text) : window.escapeHtml(msgData.text);
+      const msg = document.createElement('div');
+      msg.className = `msg ${msgData.sender}`;
+      msg.innerHTML = `
+        <div class="msg-avatar">${avatarIcon}</div>
+        <div class="msg-bubble">
+          <div class="msg-text">${formattedContent}</div>
+          <div class="msg-time">${msgData.time || 'Just now'}</div>
+        </div>
+      `;
+      container.appendChild(msg);
+    });
+    container.scrollTop = container.scrollHeight;
+  });
+};
+
+window.addChatMessage = function(text, sender, isTemporary = false) {
   const now = new Date();
   const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  // Format markdown for bot messages (bold, bullet points, linebreaks)
+  if (!isTemporary) {
+    if (!window.state.chatHistory) window.state.chatHistory = [];
+    window.state.chatHistory.push({ text, sender, time });
+    localStorage.setItem('aura_chat_history', JSON.stringify(window.state.chatHistory));
+  }
+
+  const containers = [
+    document.getElementById('chat-messages'),
+    document.getElementById('floating-chat-messages')
+  ].filter(Boolean);
+
+  if (containers.length === 0) return;
+
+  const avatarIcon = sender === 'user' ? window.ICONS.user : window.ICONS.bot;
   const formattedContent = sender === 'bot' ? window.formatMarkdownText(text) : window.escapeHtml(text);
 
-  msg.innerHTML = `
-    <div class="msg-avatar">${avatarIcon}</div>
-    <div class="msg-bubble">
-      <div class="msg-text">${formattedContent}</div>
-      <div class="msg-time">${time}</div>
-    </div>
-  `;
-
-  container.appendChild(msg);
-  container.scrollTop = container.scrollHeight;
+  containers.forEach(container => {
+    const msg = document.createElement('div');
+    msg.className = `msg ${sender}`;
+    msg.innerHTML = `
+      <div class="msg-avatar">${avatarIcon}</div>
+      <div class="msg-bubble">
+        <div class="msg-text">${formattedContent}</div>
+        <div class="msg-time">${time}</div>
+      </div>
+    `;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  });
 };
 
 // Format Markdown Bold (**text**), Bullet points, and Linebreaks
@@ -89,43 +186,48 @@ window.processAiQuery = async function(userQuery) {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
   const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+  const floatForm = document.getElementById('floating-chat-form');
+  const floatInput = document.getElementById('floating-chat-input');
+  const floatSubmitBtn = floatForm ? floatForm.querySelector('button[type="submit"]') : null;
+
   const chips = document.querySelectorAll('.suggestion-chips button');
 
-  // Prevent double-submit by disabling UI controls
-  if (input) input.disabled = true;
-  if (submitBtn) submitBtn.disabled = true;
+  // Prevent double-submit by disabling all UI controls
+  [input, submitBtn, floatInput, floatSubmitBtn].forEach(el => { if (el) el.disabled = true; });
   chips.forEach(chip => chip.disabled = true);
 
   window.addChatMessage("Thinking...", 'bot');
 
-  const container = document.getElementById('chat-messages');
-  const thinkingMsg = container.lastChild;
+  const removeThinkingMessages = () => {
+    [document.getElementById('chat-messages'), document.getElementById('floating-chat-messages')].forEach(container => {
+      if (container && container.lastChild && container.lastChild.innerText && container.lastChild.innerText.includes("Thinking...")) {
+        container.removeChild(container.lastChild);
+      }
+    });
+  };
+
+  const enableControls = () => {
+    [input, submitBtn, floatInput, floatSubmitBtn].forEach(el => { if (el) el.disabled = false; });
+    chips.forEach(chip => chip.disabled = false);
+  };
 
   if (!window.state.apiKey || window.state.apiKey.trim().length === 0) {
-    container.removeChild(thinkingMsg);
+    removeThinkingMessages();
     window.addChatMessage("Please configure your Gemini API Key in Settings (⚙️) to enable live real-time AI responses.", 'bot');
-    
-    // Enable controls back
-    if (input) input.disabled = false;
-    if (submitBtn) submitBtn.disabled = false;
-    chips.forEach(chip => chip.disabled = false);
-    if (input) input.focus();
+    enableControls();
     return;
   }
 
   try {
     const responseText = await window.callGeminiApi(userQuery);
-    container.removeChild(thinkingMsg);
+    removeThinkingMessages();
     window.addChatMessage(responseText, 'bot');
   } catch (error) {
-    container.removeChild(thinkingMsg);
+    removeThinkingMessages();
     window.addChatMessage(`API Error: ${error.message || 'Unable to connect to Google Gemini API. Please check your API key in Settings.'}`, 'bot');
   } finally {
-    // Enable controls back
-    if (input) input.disabled = false;
-    if (submitBtn) submitBtn.disabled = false;
-    chips.forEach(chip => chip.disabled = false);
-    if (input) input.focus();
+    enableControls();
   }
 };
 
@@ -169,7 +271,7 @@ window.callGeminiApi = async function(userPrompt) {
     if (serverError.message && serverError.message !== "STATIC_FALLBACK" && !serverError.message.includes("Unexpected token")) {
       throw serverError;
     }
-    
+
     // Perform direct client-side API request fallback
     return await window.callGeminiDirectly(userPrompt);
   }
@@ -193,7 +295,7 @@ window.callGeminiDirectly = async function(userPrompt) {
       const payload = {
         systemInstruction: { parts: [{ text: sysText }] },
         contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 600 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: 2000 }
       };
 
       const res = await fetch(url, {

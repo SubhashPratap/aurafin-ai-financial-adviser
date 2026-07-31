@@ -89,6 +89,111 @@ window.updateDashboard = function() {
   document.getElementById('rule-needs-val').textContent = window.formatCurrency(window.state.income * 0.5);
   document.getElementById('rule-wants-val').textContent = window.formatCurrency(window.state.income * 0.3);
   document.getElementById('rule-savings-val').textContent = window.formatCurrency(window.state.income * 0.2);
+
+  // Render or Update Chart.js Donut Chart
+  const ctx = document.getElementById('budget-chart');
+  if (ctx) {
+    const needs = window.state.needs || 0;
+    const wants = window.state.wants || 0;
+    const savings = window.state.savings || 0;
+    const totalAllocated = needs + wants + savings;
+
+    const needsPct = totalAllocated > 0 ? (needs / totalAllocated) * 100 : 0;
+    const wantsPct = totalAllocated > 0 ? (wants / totalAllocated) * 100 : 0;
+    const savingsPct = totalAllocated > 0 ? (savings / totalAllocated) * 100 : 0;
+
+    const dataValues = [needs, wants, savings];
+    const categoryColors = ['#3b82f6', '#8b5cf6', '#10b981'];
+
+    // Populate Custom Allocation Table below Chart
+    const legendList = document.getElementById('allocation-legend-list');
+    if (legendList) {
+      const categories = [
+        { name: 'Needs & Essential Bills', amount: needs, pct: needsPct, color: categoryColors[0] },
+        { name: 'Wants & Discretionary', amount: wants, pct: wantsPct, color: categoryColors[1] },
+        { name: 'Savings & Investments', amount: savings, pct: savingsPct, color: categoryColors[2] }
+      ];
+
+      legendList.innerHTML = categories.map(cat => {
+        const pctFormatted = Number.isInteger(cat.pct) ? `${cat.pct}%` : `${cat.pct.toFixed(1)}%`;
+        return `
+          <div class="allocation-row">
+            <div class="allocation-category">
+              <span class="color-pill" style="background-color: ${cat.color}"></span>
+              <span class="category-name">${cat.name}</span>
+            </div>
+            <div class="allocation-val">
+              <span>${pctFormatted}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const centerTextPlugin = {
+      id: 'centerTextPlugin',
+      beforeDraw(chart) {
+        const { width, height, ctx } = chart;
+        ctx.save();
+
+        const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        const formattedTotal = window.formatCurrency(total);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.font = '500 10px Inter, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('Total Budget', centerX, centerY - 8);
+
+        ctx.font = '700 13px "Fira Code", monospace';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(formattedTotal, centerX, centerY + 8);
+
+        ctx.restore();
+      }
+    };
+
+    if (!window.budgetChartInstance) {
+      window.budgetChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Needs', 'Wants', 'Savings'],
+          datasets: [{
+            data: dataValues,
+            backgroundColor: categoryColors,
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        plugins: [centerTextPlugin],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false // Using custom allocation table below chart
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw;
+                  return ` ${context.label}: ${window.formatCurrency(val)}`;
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    } else {
+      window.budgetChartInstance.data.datasets[0].data = dataValues;
+      window.budgetChartInstance.update();
+    }
+  }
 };
 
 window.initBudgetCalculator = function() {
