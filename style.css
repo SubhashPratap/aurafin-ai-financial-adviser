@@ -366,12 +366,16 @@ h1, h2, h3, h4 {
   transform: translateY(0);
 }
 
-/* ─── Stats cards grid ───────────────────────────────────────────────────── */
+/* ─── Stats master card (Consolidated 4-Section Metric Card) ─────────────── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
   margin-bottom: 14px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 @media (max-width: 1000px) {
@@ -379,15 +383,23 @@ h1, h2, h3, h4 {
 }
 
 .stat-card {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow 0.15s, border-color 0.15s;
+  position: relative;
+  transition: background-color 0.15s;
+}
+
+.stat-card:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.stat-card:hover {
+  background-color: var(--bg-page);
 }
 
 .stat-card:hover {
@@ -1366,13 +1378,25 @@ h1, h2, h3, h4 {
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 6px !important;
+    gap: 0 !important;
     margin-bottom: 8px !important;
+    border-radius: var(--radius-md) !important;
   }
 
   .stat-card {
     padding: 6px 10px !important;
     gap: 2px !important;
+    border-right: 1px solid var(--border) !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .stat-card:nth-child(2n) {
+    border-right: none !important;
+  }
+
+  .stat-card:nth-child(3),
+  .stat-card:nth-child(4) {
+    border-bottom: none !important;
   }
 
   .stat-header {
