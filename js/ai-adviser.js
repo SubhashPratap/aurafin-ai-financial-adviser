@@ -235,6 +235,7 @@ window.callGeminiApi = async function(userPrompt) {
   const payload = {
     userPrompt: userPrompt,
     userApiKey: window.state.apiKey,
+    chatHistory: window.state.chatHistory || [],
     state: {
       income: window.state.income,
       needs: window.state.needs,
