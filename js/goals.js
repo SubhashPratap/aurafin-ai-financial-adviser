@@ -43,6 +43,16 @@ window.renderGoals = function() {
 
   container.innerHTML = '';
 
+  if (!window.state.goals || window.state.goals.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="text-align: center; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); grid-column: 1 / -1;">
+        <i class="fa-solid fa-bullseye" style="font-size: 1.8rem; color: var(--text-muted); margin-bottom: 6px;"></i>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">No active savings goals yet. Add your first goal below to start tracking your capital!</p>
+      </div>
+    `;
+    return;
+  }
+
   window.state.goals.forEach(goal => {
     const pct = goal.target > 0 ? Math.min(100, Math.round((goal.current / goal.target) * 100)) : 0;
     const card = document.createElement('div');

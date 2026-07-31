@@ -2,20 +2,16 @@
    AuraFin — State & Utility Module (js/state.js)
    ========================================================================== */
 
-// Load saved budget from localStorage or default to INR benchmarks
+// Load saved budget from localStorage or default to empty initial budget
 const savedBudget = JSON.parse(localStorage.getItem('aura_budget_data')) || {
-  income: 80000,
-  needs: 40000,
-  wants: 16000,
-  savings: 24000
+  income: 0,
+  needs: 0,
+  wants: 0,
+  savings: 0
 };
 
-// Load saved goals from localStorage or default
-const savedGoals = JSON.parse(localStorage.getItem('aura_goals_data')) || [
-  { id: 1, name: 'Emergency Capital Reserve', target: 300000, current: 180000 },
-  { id: 2, name: 'Vehicle Replacement Reserve', target: 150000, current: 60000 },
-  { id: 3, name: 'Property Down Payment', target: 500000, current: 250000 }
-];
+// Load saved goals from localStorage or default to empty goals list
+const savedGoals = JSON.parse(localStorage.getItem('aura_goals_data')) || [];
 
 // Load saved chat history from localStorage or default welcome message
 const savedChatHistory = JSON.parse(localStorage.getItem('aura_chat_history')) || [
