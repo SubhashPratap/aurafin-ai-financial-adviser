@@ -1174,6 +1174,17 @@ h1, h2, h3, h4 {
   outline: none;
 }
 
+/* Hamburger menu toggle button base style */
+.mobile-menu-toggle {
+  display: none;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ─── Mobile & Tablet Responsiveness Overrides ──────────────────────────── */
 @media (max-width: 1024px) {
   html, body {
@@ -1190,11 +1201,30 @@ h1, h2, h3, h4 {
     overflow-y: auto !important;
   }
 
+  .mobile-menu-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    font-size: 1.05rem;
+    color: var(--text-heading);
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .mobile-menu-toggle:hover {
+    background-color: var(--bg-subtle);
+  }
+
   .sidebar {
     width: 100% !important;
     height: auto !important;
     position: static !important;
-    padding: 10px 14px !important;
+    padding: 10px 16px !important;
     border-right: none !important;
     border-bottom: 1px solid var(--border) !important;
     flex-direction: column !important;
@@ -1205,29 +1235,30 @@ h1, h2, h3, h4 {
   .brand {
     width: 100% !important;
     margin-bottom: 0 !important;
-    justify-content: flex-start !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
 
   .nav-menu {
-    flex-direction: row !important;
-    overflow-x: auto !important;
+    display: none !important;
+    flex-direction: column !important;
     width: 100% !important;
-    padding: 6px 0 2px 0 !important;
+    padding: 8px 0 4px 0 !important;
     border-top: 1px solid var(--border) !important;
-    scrollbar-width: none !important;
-    gap: 6px !important;
-    -webkit-overflow-scrolling: touch !important;
+    gap: 4px !important;
   }
 
-  .nav-menu::-webkit-scrollbar {
-    display: none !important;
+  .nav-menu.mobile-active {
+    display: flex !important;
   }
 
   .nav-item {
-    padding: 7px 14px !important;
-    font-size: 0.82rem !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.88rem !important;
+    justify-content: flex-start !important;
+    border-radius: var(--radius-sm) !important;
   }
 
   .api-key-box {

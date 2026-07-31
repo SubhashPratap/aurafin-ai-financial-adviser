@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
+  initMobileMenu();
   if (window.initCurrencySelector) window.initCurrencySelector();
   if (window.initLanguageSelector) window.initLanguageSelector();
   if (window.initBudgetCalculator) window.initBudgetCalculator();
@@ -12,6 +13,47 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettingsModal();
   if (window.updateDashboard) window.updateDashboard();
 });
+
+// --- Mobile Hamburger Menu Controller ---
+function initMobileMenu() {
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const navMenu = document.querySelector('.nav-menu');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  if (toggleBtn && navMenu) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navMenu.classList.toggle('mobile-active');
+      const icon = toggleBtn.querySelector('i');
+      if (icon) {
+        if (navMenu.classList.contains('mobile-active')) {
+          icon.className = 'fa-solid fa-xmark';
+        } else {
+          icon.className = 'fa-solid fa-bars';
+        }
+      }
+    });
+
+    // Close mobile menu when a tab item is clicked
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navMenu.classList.remove('mobile-active');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-bars';
+      });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const sidebar = document.querySelector('.sidebar');
+      if (navMenu.classList.contains('mobile-active') && sidebar && !sidebar.contains(e.target)) {
+        navMenu.classList.remove('mobile-active');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-bars';
+      }
+    });
+  }
+}
 
 // --- Tab Navigation Controller ---
 function initTabs() {
