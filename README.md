@@ -4,7 +4,7 @@ A modern, responsive web application for personal wealth management, budgeting a
 
 ---
 
-## 🌐 Live Deployments
+## Live Deployments
 
 - **Render Live Site**: [https://aurafin-ai-financial-adviser.onrender.com](https://aurafin-ai-financial-adviser.onrender.com)
 - **GitHub Pages Site**: [https://subhashpratap.github.io/aurafin-ai-financial-adviser/](https://subhashpratap.github.io/aurafin-ai-financial-adviser/)
@@ -12,7 +12,7 @@ A modern, responsive web application for personal wealth management, budgeting a
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 1. **Financial Overview Dashboard**:
    - Live net cash flow metrics (Income, Expenses, Net Monthly Surplus).
@@ -33,7 +33,7 @@ A modern, responsive web application for personal wealth management, budgeting a
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend**: HTML5, CSS3 (Custom 100% Solid Theme System), Vanilla JavaScript (ES6+).
 - **Icons**: Font Awesome 6 Free Vector Icon Library.
@@ -42,7 +42,7 @@ A modern, responsive web application for personal wealth management, budgeting a
 
 ---
 
-## 🚀 How to Run Locally
+## How to Run Locally
 
 ### Method 1: Direct File Access
 Simply open `index.html` in any modern web browser (Google Chrome, Microsoft Edge, Mozilla Firefox, Brave).
@@ -62,7 +62,7 @@ Open `http://localhost:8080` in your web browser.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 SUBAHSH_PROJECT_ITR/
@@ -74,6 +74,6 @@ SUBAHSH_PROJECT_ITR/
 
 ---
 
-## 🎓 Submission Notes
+## Submission Notes
 
 This project demonstrates clean code architecture, responsive UI design without bloated external frameworks, robust state management in pure JavaScript, and AI API integration patterns.
