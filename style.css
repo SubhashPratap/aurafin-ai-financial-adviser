@@ -1178,6 +1178,7 @@ h1, h2, h3, h4 {
 @media (max-width: 1024px) {
   html, body {
     height: auto !important;
+    overflow-x: hidden !important;
     overflow-y: auto !important;
   }
 
@@ -1185,6 +1186,7 @@ h1, h2, h3, h4 {
     flex-direction: column !important;
     height: auto !important;
     min-height: 100vh !important;
+    overflow-x: hidden !important;
     overflow-y: auto !important;
   }
 
@@ -1192,28 +1194,29 @@ h1, h2, h3, h4 {
     width: 100% !important;
     height: auto !important;
     position: static !important;
-    padding: 12px 16px !important;
+    padding: 10px 14px !important;
     border-right: none !important;
     border-bottom: 1px solid var(--border) !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 8px !important;
   }
 
   .brand {
+    width: 100% !important;
     margin-bottom: 0 !important;
+    justify-content: flex-start !important;
   }
 
   .nav-menu {
     flex-direction: row !important;
     overflow-x: auto !important;
     width: 100% !important;
-    padding-top: 8px !important;
+    padding: 6px 0 2px 0 !important;
     border-top: 1px solid var(--border) !important;
     scrollbar-width: none !important;
-    gap: 4px !important;
+    gap: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   .nav-menu::-webkit-scrollbar {
@@ -1221,7 +1224,7 @@ h1, h2, h3, h4 {
   }
 
   .nav-item {
-    padding: 6px 12px !important;
+    padding: 7px 14px !important;
     font-size: 0.82rem !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
@@ -1232,17 +1235,55 @@ h1, h2, h3, h4 {
   }
 
   .main-content {
-    padding: 14px 16px !important;
+    padding: 12px 14px !important;
     height: auto !important;
     max-width: 100% !important;
+    overflow-x: hidden !important;
     overflow-y: visible !important;
   }
 
   .top-bar {
-    flex-wrap: wrap !important;
+    display: flex !important;
     justify-content: space-between !important;
-    gap: 8px !important;
-    margin-bottom: 12px !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+  }
+
+  .top-bar-controls {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .control-dropdown {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+    gap: 4px !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .control-dropdown select {
+    font-size: 0.75rem !important;
+    max-width: 110px !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .user-profile {
+    font-size: 0.78rem !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .user-profile span {
+    display: none !important;
   }
 
   .stats-grid {
@@ -1286,10 +1327,5 @@ h1, h2, h3, h4 {
 
   .stat-value {
     font-size: 1.25rem !important;
-  }
-
-  .top-bar-controls {
-    width: 100% !important;
-    justify-content: space-between !important;
   }
 }
