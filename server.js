@@ -30,6 +30,11 @@ const getGeminiClient = (userApiKey) => {
   return new GoogleGenerativeAI(apiKey);
 };
 
+// Temporary test API endpoint
+app.post("/api/test", (req, res) => {
+  res.json({ message: "POST OK", received: req.body });
+});
+
 // API Endpoint to process financial adviser prompts on the server side
 app.post("/api/chat", async (req, res) => {
   const { userPrompt, state, userApiKey } = req.body;
