@@ -1173,3 +1173,118 @@ h1, h2, h3, h4 {
   color: var(--text-body);
   outline: none;
 }
+
+/* ─── Mobile Responsiveness & Touch Optimization ────────────────────────── */
+@media (max-width: 768px) {
+  html, body {
+    overflow-y: auto;
+  }
+
+  .app-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 12px 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand {
+    margin-bottom: 0;
+  }
+
+  .nav-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    width: 100%;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+
+  .nav-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .api-key-box {
+    display: none;
+  }
+
+  .main-content {
+    padding: 14px 16px;
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .top-bar {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .floating-chat-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .floating-chat-drawer {
+    width: calc(100vw - 32px);
+    right: -6px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 10px 12px;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .control-dropdown {
+    padding: 4px 8px;
+    font-size: 0.78rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+}
