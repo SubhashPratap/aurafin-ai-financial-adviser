@@ -324,6 +324,17 @@ h1, h2, h3, h4 {
   color: var(--text-body);
 }
 
+.top-settings-pill {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.top-settings-pill:hover {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-strong);
+}
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -1334,17 +1345,21 @@ h1, h2, h3, h4 {
   }
 
   .control-dropdown {
-    padding: 4px 8px !important;
-    font-size: 0.75rem !important;
+    padding: 5px 9px !important;
+    font-size: 0.78rem !important;
     gap: 4px !important;
     flex-shrink: 0 !important;
     min-width: 0 !important;
+    border-radius: 16px !important;
   }
 
   .control-dropdown select {
-    font-size: 0.75rem !important;
-    max-width: 110px !important;
-    text-overflow: ellipsis !important;
+    font-size: 0.78rem !important;
+    max-width: none !important;
+  }
+
+  .top-settings-pill .btn-text-desktop {
+    display: none !important;
   }
 
   .user-profile {
