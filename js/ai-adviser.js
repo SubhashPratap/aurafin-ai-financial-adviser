@@ -7,6 +7,9 @@ window.initChat = function() {
   const input = document.getElementById('chat-input');
   if (!form || !input) return;
 
+  // Initialize status dot based on existing key
+  window.updateApiStatusIndicator();
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = input.value.trim();
@@ -19,9 +22,22 @@ window.initChat = function() {
   });
 };
 
+window.updateApiStatusIndicator = function() {
+  const dot = document.querySelector('.api-status .status-dot');
+  const text = document.querySelector('.api-status .status-text');
+  if (!dot || !text) return;
+  if (window.state.apiKey && window.state.apiKey.trim().length > 0) {
+    dot.classList.add('active');
+    text.textContent = 'AI Adviser Ready';
+  } else {
+    dot.classList.remove('active');
+    text.textContent = 'Configure API Key';
+  }
+};
+
 window.askQuickQuestion = function(questionText) {
   const input = document.getElementById('chat-input');
-  if (!input) return;
+  if (!input || input.disabled) return;
   input.value = questionText;
   document.getElementById('chat-form').dispatchEvent(new Event('submit'));
 };
@@ -70,6 +86,16 @@ window.formatMarkdownText = function(text) {
 };
 
 window.processAiQuery = async function(userQuery) {
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+  const chips = document.querySelectorAll('.suggestion-chips button');
+
+  // Prevent double-submit by disabling UI controls
+  if (input) input.disabled = true;
+  if (submitBtn) submitBtn.disabled = true;
+  chips.forEach(chip => chip.disabled = true);
+
   window.addChatMessage("Thinking...", 'bot');
 
   const container = document.getElementById('chat-messages');
@@ -78,6 +104,12 @@ window.processAiQuery = async function(userQuery) {
   if (!window.state.apiKey || window.state.apiKey.trim().length === 0) {
     container.removeChild(thinkingMsg);
     window.addChatMessage("Please configure your Gemini API Key in Settings (⚙️) to enable live real-time AI responses.", 'bot');
+    
+    // Enable controls back
+    if (input) input.disabled = false;
+    if (submitBtn) submitBtn.disabled = false;
+    chips.forEach(chip => chip.disabled = false);
+    if (input) input.focus();
     return;
   }
 
@@ -88,6 +120,12 @@ window.processAiQuery = async function(userQuery) {
   } catch (error) {
     container.removeChild(thinkingMsg);
     window.addChatMessage(`API Error: ${error.message || 'Unable to connect to Google Gemini API. Please check your API key in Settings.'}`, 'bot');
+  } finally {
+    // Enable controls back
+    if (input) input.disabled = false;
+    if (submitBtn) submitBtn.disabled = false;
+    chips.forEach(chip => chip.disabled = false);
+    if (input) input.focus();
   }
 };
 
@@ -110,6 +148,18 @@ window.callGeminiApi = async function(userPrompt) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    let errorMessage = "Server error occurred.";
+    try {
+      const errorJson = JSON.parse(errorText);
+      errorMessage = errorJson.error || errorMessage;
+    } catch (_) {
+      errorMessage = errorText || `HTTP ${res.status}: ${res.statusText}`;
+    }
+    throw new Error(errorMessage);
+  }
 
   const data = await res.json();
   if (data.error) {

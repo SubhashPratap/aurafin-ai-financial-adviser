@@ -51,13 +51,39 @@ window.updateDashboard = function() {
   if (savingsPct < 20) score -= (20 - savingsPct) * 1.5;
   score = Math.max(20, Math.min(100, Math.round(score)));
 
+  // Determine status message and color class based on score
+  let statusText = "Excellent";
+  let statusClass = "text-success";
+  if (score < 40) {
+    statusText = "Critical";
+    statusClass = "text-danger";
+  } else if (score < 60) {
+    statusText = "Needs Attention";
+    statusClass = "text-warning";
+  } else if (score < 80) {
+    statusText = "Good";
+    statusClass = "text-success";
+  }
+
   // Update DOM Display Elements
+  const scoreEl = document.getElementById('disp-score');
+  const scoreStatusEl = document.getElementById('disp-score-status');
+  
+  if (scoreEl) {
+    scoreEl.textContent = `${score}/100`;
+    // Update score text color class dynamically
+    scoreEl.className = `stat-value font-mono ${statusClass}`;
+  }
+  if (scoreStatusEl) {
+    scoreStatusEl.textContent = `Status: ${statusText}`;
+    scoreStatusEl.className = `stat-sub ${statusClass}`;
+  }
+
   document.getElementById('disp-income').textContent = window.formatCurrency(window.state.income);
   document.getElementById('disp-expenses').textContent = window.formatCurrency(totalExpenses);
   document.getElementById('disp-expenses-pct').textContent = `${expensesPct}% of income`;
   document.getElementById('disp-savings').textContent = window.formatCurrency(netSavings);
   document.getElementById('disp-savings-pct').textContent = `${savingsPct}% savings rate`;
-  document.getElementById('disp-score').textContent = `${score}/100`;
 
   // Update 50/30/20 Rule Breakdown
   document.getElementById('rule-needs-val').textContent = window.formatCurrency(window.state.income * 0.5);

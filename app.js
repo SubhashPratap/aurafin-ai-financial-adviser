@@ -61,6 +61,7 @@ function initSettingsModal() {
       window.state.apiKey = keyInput.value.trim();
       window.state.activeModelPath = null;
       localStorage.setItem('aura_gemini_key', window.state.apiKey);
+      if (window.updateApiStatusIndicator) window.updateApiStatusIndicator();
       closeModal();
     });
   }
