@@ -143,34 +143,85 @@ window.callGeminiApi = async function(userPrompt) {
     }
   };
 
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    let errorMessage = "Server error occurred.";
-    try {
-      const errorJson = JSON.parse(errorText);
-      errorMessage = errorJson.error || errorMessage;
-    } catch (_) {
-      errorMessage = errorText || `HTTP ${res.status}: ${res.statusText}`;
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.trim().length > 0) {
+        const data = JSON.parse(text);
+        if (data.text) {
+          return window.sanitizeAiOutput(data.text);
+        }
+        if (data.error) {
+          throw new Error(data.error);
+        }
+      }
     }
-    throw new Error(errorMessage);
+    // If response is OK but body is empty, it means we are on a static site host. Force fallback.
+    throw new Error("STATIC_FALLBACK");
+  } catch (serverError) {
+    // If it's a real API key error from the backend, bubble it up instead of falling back
+    if (serverError.message && serverError.message !== "STATIC_FALLBACK" && !serverError.message.includes("Unexpected token")) {
+      throw serverError;
+    }
+    
+    // Perform direct client-side API request fallback
+    return await window.callGeminiDirectly(userPrompt);
+  }
+};
+
+window.callGeminiDirectly = async function(userPrompt) {
+  const cleanKey = window.state.apiKey.trim();
+  const targetLanguage = window.state.language || 'English';
+  const targetCurrency = window.state.currency || '₹';
+
+  const contextLine = `Income ${window.formatCurrency(window.state.income)}, Needs ${window.formatCurrency(window.state.needs)}, Savings ${window.formatCurrency(window.state.savings)}.`;
+  const sysText = `You are AuraFin, a friendly financial adviser. Reply in ${targetLanguage}. Use ${targetCurrency}. User context: ${contextLine} Give 2-3 short bullet points of simple, direct, practical advice. No jargon. If the question is not about personal finance, politely state in ${targetLanguage} that you can only answer financial questions.`;
+
+  const candidateModels = ['models/gemini-flash-latest', 'models/gemini-3.5-flash', 'models/gemini-2.0-flash-lite', 'models/gemini-2.0-flash', 'models/gemini-flash-lite-latest'];
+
+  let lastError = null;
+
+  for (const modelPath of candidateModels) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent?key=${cleanKey}`;
+      const payload = {
+        systemInstruction: { parts: [{ text: sysText }] },
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        generationConfig: { temperature: 0.4, maxOutputTokens: 600 }
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        try {
+          const errJson = JSON.parse(errText);
+          throw new Error(errJson.error?.message || `HTTP ${res.status}`);
+        } catch (_) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+      }
+
+      const data = await res.json();
+      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+        return window.sanitizeAiOutput(data.candidates[0].content.parts[0].text);
+      }
+    } catch (err) {
+      lastError = err.message;
+    }
   }
 
-  const data = await res.json();
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  if (data.text) {
-    return window.sanitizeAiOutput(data.text);
-  }
-
-  throw new Error("Invalid or empty response from backend adviser server.");
+  throw new Error(lastError || 'Invalid API key or HTTP response error from Google Gemini.');
 };
 
 window.sanitizeAiOutput = function(rawText) {
