@@ -80,13 +80,13 @@ function initTabs() {
 // --- Settings Modal Controller ---
 function initSettingsModal() {
   const modal = document.getElementById('settings-modal');
-  const openBtn = document.getElementById('open-settings-btn');
+  const openTriggers = document.querySelectorAll('.open-settings-trigger');
   const closeBtn = document.getElementById('close-settings-btn');
   const cancelBtn = document.getElementById('cancel-settings-btn');
   const saveBtn = document.getElementById('save-settings-btn');
   const keyInput = document.getElementById('gemini-api-key');
 
-  if (!modal || !openBtn) return;
+  if (!modal) return;
 
   if (window.state && window.state.apiKey && keyInput) {
     keyInput.value = window.state.apiKey;
@@ -95,7 +95,7 @@ function initSettingsModal() {
   const openModal = () => modal.classList.add('active');
   const closeModal = () => modal.classList.remove('active');
 
-  openBtn.addEventListener('click', openModal);
+  openTriggers.forEach(btn => btn.addEventListener('click', openModal));
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 

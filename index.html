@@ -69,6 +69,10 @@
             <i class="fa-solid fa-calculator"></i>
             <span>Budget Split</span>
           </button>
+          <button class="nav-item open-settings-trigger" id="open-settings-btn-mobile">
+            <i class="fa-solid fa-gear"></i>
+            <span>API Settings</span>
+          </button>
         </nav>
 
         <div class="api-key-box">
@@ -76,7 +80,7 @@
             <span class="status-dot active"></span>
             <span class="status-text">Configure API Key</span>
           </div>
-          <button class="btn-secondary btn-small" id="open-settings-btn">
+          <button class="btn-secondary btn-small open-settings-trigger" id="open-settings-btn">
             <i class="fa-solid fa-gear"></i> Settings
           </button>
         </div>
@@ -113,6 +117,12 @@
                 <option value="Japanese">Japanese (日本語)</option>
               </select>
             </div>
+
+            <!-- Header Settings Button -->
+            <button class="control-dropdown open-settings-trigger" id="open-settings-btn-header" title="Configure API Key" style="cursor: pointer; border: 1px solid var(--border);">
+              <i class="fa-solid fa-gear"></i>
+              <span style="font-weight: 500;">Settings</span>
+            </button>
 
             <div class="user-profile">
               <div class="avatar">

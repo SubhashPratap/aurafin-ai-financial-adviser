@@ -1320,13 +1320,14 @@ h1, h2, h3, h4 {
     margin-bottom: 10px !important;
     padding-bottom: 8px !important;
     gap: 6px !important;
-    overflow: hidden !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
   }
 
   .top-bar-controls {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     width: 100% !important;
     gap: 6px !important;
     flex-wrap: nowrap !important;
@@ -1336,7 +1337,7 @@ h1, h2, h3, h4 {
     padding: 4px 8px !important;
     font-size: 0.75rem !important;
     gap: 4px !important;
-    flex-shrink: 1 !important;
+    flex-shrink: 0 !important;
     min-width: 0 !important;
   }
 
