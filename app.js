@@ -1,7 +1,4 @@
-/* ==========================================================================
-   AuraFin — Main Application Orchestrator & Settings Modal (app.js)
-   ========================================================================== */
-
+// App bootstrapper and UI controllers
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initMobileMenu();

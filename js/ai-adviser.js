@@ -1,6 +1,5 @@
-/* ==========================================================================
-   AuraFin — AI Financial Adviser Module (js/ai-adviser.js)
-   ========================================================================== */window.initChat = function() {
+// AI Adviser chat module: handles full page chat, floating widget sync, and Gemini API calls
+window.initChat = function() {
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
 

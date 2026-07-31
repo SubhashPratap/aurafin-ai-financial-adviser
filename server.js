@@ -4,38 +4,32 @@ const cors = require("cors");
 const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Prevent server crashes from unhandled promise rejections/uncaught exceptions
+// Global error guards to keep process running
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  console.error("Unhandled rejection:", reason);
 });
 process.on("uncaughtException", (error) => {
-  console.error("Uncaught Exception caught:", error);
+  console.error("Uncaught exception:", error);
 });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve all static UI assets directly from the root workspace
+// Serve frontend assets
 app.use(express.static(path.join(__dirname)));
 app.use("/js", express.static(path.join(__dirname, "js")));
 
-// Safe initialization of Google Generative AI client
+// Get Gemini instance using user key or env var fallback
 const getGeminiClient = (userApiKey) => {
   const apiKey = (userApiKey && userApiKey.trim()) || process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
   return new GoogleGenerativeAI(apiKey);
 };
 
-// Temporary test API endpoint
-app.post("/api/test", (req, res) => {
-  res.json({ message: "POST OK", received: req.body });
-});
-
-// API Endpoint to process financial adviser prompts on the server side
+// Main AI Chat Handler
 app.post("/api/chat", async (req, res) => {
   const { userPrompt, state, userApiKey, chatHistory } = req.body;
 

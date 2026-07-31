@@ -1,7 +1,4 @@
-/* ==========================================================================
-   AuraFin — Capital Reserve Goals Module (js/goals.js)
-   ========================================================================== */
-
+// Savings Goals module: handles goal creation, deletion, rendering, and progress update modal
 let activeUpdatingGoalId = null;
 
 window.initGoals = function() {

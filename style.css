@@ -1,8 +1,4 @@
-/* ==========================================================================
-   AuraFin — Professional Light Design System
-   Clean, whitespace-driven, finance-grade UI. No gimmicks.
-   ========================================================================== */
-
+/* Design tokens and theme variables */
 :root {
   /* Background layers */
   --bg-page:     #f7f8fa;

@@ -1,7 +1,4 @@
-/* ==========================================================================
-   AuraFin — Dashboard & Budget Calculator Module (js/dashboard.js)
-   ========================================================================== */
-
+// Currency & language selectors, dashboard metrics recalculation, and Chart.js integration
 window.initCurrencySelector = function() {
   const select = document.getElementById('currency-select');
   if (!select) return;

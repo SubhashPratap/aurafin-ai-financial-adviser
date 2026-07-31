@@ -1,8 +1,4 @@
-/* ==========================================================================
-   AuraFin — State & Utility Module (js/state.js)
-   ========================================================================== */
-
-// Load saved budget from localStorage or default to empty initial budget
+// Load persisted state from localStorage
 const savedBudget = JSON.parse(localStorage.getItem('aura_budget_data')) || {
   income: 0,
   needs: 0,
@@ -10,15 +6,13 @@ const savedBudget = JSON.parse(localStorage.getItem('aura_budget_data')) || {
   savings: 0
 };
 
-// Load saved goals from localStorage or default to empty goals list
 const savedGoals = JSON.parse(localStorage.getItem('aura_goals_data')) || [];
 
-// Load saved chat history from localStorage or default welcome message
 const savedChatHistory = JSON.parse(localStorage.getItem('aura_chat_history')) || [
   { text: "Welcome to AuraFin Advisory. How can I assist you with your financial planning today?", sender: "bot", time: "Just now" }
 ];
 
-// Global Application State Object
+// App-wide reactive state object
 window.state = {
   income: savedBudget.income,
   needs: savedBudget.needs,
