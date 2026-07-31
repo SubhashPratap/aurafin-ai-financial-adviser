@@ -846,21 +846,35 @@ h1, h2, h3, h4 {
   background-color: var(--danger-light);
 }
 
-/* ─── 50/30/20 rule ──────────────────────────────────────────────────────── */
+/* ─── Balanced Capital Allocation Master Card ────────────────────────────── */
 .rule-explanation {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 .rule-box {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px;
+  border: none;
+  border-radius: 0;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  background-color: var(--bg-page);
+  gap: 10px;
+  background-color: transparent;
+  transition: background-color 0.15s;
+}
+
+.rule-box:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.rule-box:hover {
+  background-color: var(--bg-subtle);
 }
 
 .rule-pct {
