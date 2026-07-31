@@ -477,6 +477,27 @@
       </div>
     </div>
 
+    <!-- Goal Progress Update Modal -->
+    <div class="modal-overlay" id="goal-update-modal">
+      <div class="modal" style="max-width: 380px;">
+        <div class="modal-header">
+          <h3>Update Goal Progress</h3>
+          <button class="modal-close" id="close-goal-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="goal-update-subtitle" style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;"></p>
+          <div class="form-group">
+            <label for="goal-update-input">New Saved Amount (<span class="curr-sym">₹</span>)</label>
+            <input type="number" id="goal-update-input" placeholder="0" class="font-mono" style="width: 100%; padding: 8px 12px; font-size: 0.95rem; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none;" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" id="cancel-goal-modal-btn">Cancel</button>
+          <button class="btn-primary" id="save-goal-modal-btn">Save Progress</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Floating AI Assistant Widget -->
     <div class="floating-chat-container">
       <button id="floating-chat-toggle" class="floating-chat-fab" title="Quick AI Financial Chat">

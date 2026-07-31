@@ -2,30 +2,67 @@
    AuraFin — Capital Reserve Goals Module (js/goals.js)
    ========================================================================== */
 
+let activeUpdatingGoalId = null;
+
 window.initGoals = function() {
   window.renderGoals();
 
   const goalForm = document.getElementById('goal-form');
-  if (!goalForm) return;
+  if (goalForm) {
+    goalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('goal-name').value;
+      const target = Number(document.getElementById('goal-target').value);
+      const current = Number(document.getElementById('goal-current').value);
 
-  goalForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('goal-name').value;
-    const target = Number(document.getElementById('goal-target').value);
-    const current = Number(document.getElementById('goal-current').value);
+      window.state.goals.push({
+        id: Date.now(),
+        name,
+        target,
+        current
+      });
 
-    window.state.goals.push({
-      id: Date.now(),
-      name,
-      target,
-      current
+      window.saveGoalsToLocalStorage();
+      window.renderGoals();
+      goalForm.reset();
     });
+  }
 
-    window.saveGoalsToLocalStorage();
-    window.renderGoals();
-    goalForm.reset();
-  });
+  // Initialize Goal Update Modal Controller
+  initGoalUpdateModal();
 };
+
+function initGoalUpdateModal() {
+  const modal = document.getElementById('goal-update-modal');
+  const closeBtn = document.getElementById('close-goal-modal-btn');
+  const cancelBtn = document.getElementById('cancel-goal-modal-btn');
+  const saveBtn = document.getElementById('save-goal-modal-btn');
+  const input = document.getElementById('goal-update-input');
+
+  if (!modal || !saveBtn) return;
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    activeUpdatingGoalId = null;
+  };
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+  saveBtn.addEventListener('click', () => {
+    if (!activeUpdatingGoalId) return;
+    const goal = window.state.goals.find(g => g.id === activeUpdatingGoalId);
+    if (goal && input) {
+      const newSaved = Number(input.value.trim());
+      if (!isNaN(newSaved) && newSaved >= 0) {
+        goal.current = newSaved;
+        window.saveGoalsToLocalStorage();
+        window.renderGoals();
+        closeModal();
+      }
+    }
+  });
+}
 
 window.saveGoalsToLocalStorage = function() {
   localStorage.setItem('aura_goals_data', JSON.stringify(window.state.goals));
@@ -41,17 +78,16 @@ window.updateGoalProgress = function(goalId) {
   const goal = window.state.goals.find(g => g.id === goalId);
   if (!goal) return;
 
-  const currentSymbol = window.state.currency || '₹';
-  const inputVal = prompt(`Update total saved amount for "${goal.name}" (${currentSymbol}):`, goal.current);
-  if (inputVal === null) return; // User cancelled
+  activeUpdatingGoalId = goalId;
+  const modal = document.getElementById('goal-update-modal');
+  const subtitle = document.getElementById('goal-update-subtitle');
+  const input = document.getElementById('goal-update-input');
 
-  const newSaved = Number(inputVal.trim());
-  if (!isNaN(newSaved) && newSaved >= 0) {
-    goal.current = newSaved;
-    window.saveGoalsToLocalStorage();
-    window.renderGoals();
-  } else {
-    alert("Please enter a valid non-negative number.");
+  if (modal && subtitle && input) {
+    subtitle.textContent = `Update total saved capital for "${goal.name}"`;
+    input.value = goal.current;
+    modal.classList.add('active');
+    setTimeout(() => input.focus(), 100);
   }
 };
 
