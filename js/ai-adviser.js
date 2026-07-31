@@ -34,9 +34,6 @@
     floatToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       floatDrawer.classList.toggle('active');
-      if (floatDrawer.classList.contains('active') && floatInput) {
-        floatInput.focus();
-      }
     });
   }
 
