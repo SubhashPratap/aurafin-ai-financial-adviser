@@ -81,29 +81,29 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: -10%;
+  left: -10%;
+  width: 120vw;
+  height: 120vh;
   pointer-events: none;
   z-index: 0;
   background-image: 
-    radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.10) 0%, transparent 45%),
-    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232563eb' fill-opacity='0.12' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
-  animation: ambientFloat 20s ease-in-out infinite alternate;
+    radial-gradient(circle at 18% 22%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%232563eb' stroke-width='1' stroke-opacity='0.16'%3E%3Cpolygon points='40,0 80,20 80,60 40,80 0,60 0,20'/%3E%3Cline x1='40' y1='0' x2='40' y2='80'/%3E%3Cline x1='0' y1='20' x2='80' y2='60'/%3E%3Cline x1='0' y1='60' x2='80' y2='20'/%3E%3Ccircle cx='40' cy='40' r='3' fill='%232563eb' fill-opacity='0.3'/%3E%3Ccircle cx='40' cy='0' r='2' fill='%2310b981' fill-opacity='0.35'/%3E%3Ccircle cx='80' cy='20' r='2' fill='%2310b981' fill-opacity='0.35'/%3E%3Ccircle cx='80' cy='60' r='2' fill='%2310b981' fill-opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
+  animation: uniqueTechFloat 25s ease-in-out infinite alternate;
   will-change: transform;
 }
 
-@keyframes ambientFloat {
+@keyframes uniqueTechFloat {
   0% {
-    transform: translate3d(0, 0, 0);
+    transform: scale(1) translate3d(0, 0, 0);
   }
   50% {
-    transform: translate3d(18px, -24px, 0);
+    transform: scale(1.03) translate3d(24px, -30px, 0);
   }
   100% {
-    transform: translate3d(-18px, 18px, 0);
+    transform: scale(1.01) translate3d(-24px, 20px, 0);
   }
 }
 
