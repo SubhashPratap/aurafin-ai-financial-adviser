@@ -361,18 +361,30 @@ h1, h2, h3, h4 {
   font-size: 0.82rem;
 }
 
-/* ─── Tab pages ──────────────────────────────────────────────────────────── */
+/* ─── Tab pages & Performance Optimizations ─────────────────────────────── */
 .tab-page {
   display: none;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.18s ease, transform 0.18s ease;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
 }
 
 .tab-page.active {
   display: block;
   opacity: 1;
   transform: translateY(0);
+  will-change: opacity, transform;
+}
+
+/* Containment & Hardware Acceleration Hints */
+.stat-card, .content-card, .goal-card {
+  contain: layout style paint;
+}
+
+.floating-chat-drawer, .modal-overlay, .modal {
+  will-change: transform, opacity;
 }
 
 /* ─── Stats Master Card (Consolidated PC & Mobile Metric Bar) ─────────────── */

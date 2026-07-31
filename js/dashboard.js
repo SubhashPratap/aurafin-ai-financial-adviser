@@ -87,9 +87,10 @@ window.updateDashboard = function() {
   document.getElementById('rule-wants-val').textContent = window.formatCurrency(window.state.income * 0.3);
   document.getElementById('rule-savings-val').textContent = window.formatCurrency(window.state.income * 0.2);
 
-  // Render or Update Chart.js Donut Chart
-  const ctx = document.getElementById('budget-chart');
-  if (ctx) {
+  // Render or Update Chart.js Donut Chart (Batched for 60fps performance)
+  requestAnimationFrame(() => {
+    const ctx = document.getElementById('budget-chart');
+    if (ctx) {
     const needs = window.state.needs || 0;
     const wants = window.state.wants || 0;
     const savings = window.state.savings || 0;
@@ -191,6 +192,7 @@ window.updateDashboard = function() {
       window.budgetChartInstance.update();
     }
   }
+  });
 };
 
 window.initBudgetCalculator = function() {
