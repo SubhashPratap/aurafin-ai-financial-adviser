@@ -224,36 +224,6 @@ h1, h2, h3, h4 {
   color: var(--primary);
 }
 
-/* API key / settings box at bottom */
-.api-key-box {
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.api-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: var(--border-strong);
-  flex-shrink: 0;
-  transition: background-color 0.2s ease;
-}
-
-.status-dot.active {
-  background-color: var(--success);
-  box-shadow: 0 0 6px rgba(22, 163, 74, 0.4);
 }
 
 /* ─── Main content ───────────────────────────────────────────────────────── */
@@ -1311,9 +1281,7 @@ h1, h2, h3, h4 {
     border-radius: var(--radius-sm) !important;
   }
 
-  .api-key-box {
-    display: none !important;
-  }
+
 
   .main-content {
     padding: 12px 14px !important;
